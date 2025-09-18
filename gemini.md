@@ -145,7 +145,7 @@ Our design philosophy for the frontend dashboard is to create a modern, clean, a
 
 5.  **Gemini AI Assistant:**
     *   An integrated chat interface where operators can interact with the Gemini AI assistant.
-    *   Operators can ask questions in natural language (e.g., "What was the average f-CaO level in the last 24 hours?", "Show me the maintenance history for Kiln 1"), retrieve information, and initiate actions.
+    *   Operators can ask questions in natural language (e.g., "What was the average kiln temperature last shift?", "Show me the maintenance history for Kiln 1"), retrieve information, and initiate actions.
 
 ### Technology Stack (Proposed)
 
@@ -184,3 +184,94 @@ Our design philosophy for the frontend dashboard is to create a modern, clean, a
 
 *   **Model Training:** Begin the development of the predictive models (CRNN and BO-LightGBM) using the data in BigQuery.
 *   **Frontend Dashboard Development:** Continue implementing the core UI components and integrating with mock data or a preliminary API.
+
+## 13. Frontend Dashboard - Comprehensive Feature List
+
+This list details the features for an export-level, production-grade UI, ensuring a professional and highly functional "Operator's Cockpit."
+
+### 1. Kiln Health Overview (The "Mission Control" View)
+
+*   **Real-time Status Indicators:**
+    *   Overall Kiln Status (Operational, Warning, Critical, Offline).
+    *   Color-coded health indicators for major kiln zones (e.g., Preheater, Calciner, Burning Zone, Cooling Zone).
+    *   Visual representation of material flow through the kiln.
+*   **Key Operational Parameters at a Glance:**
+    *   Current Kiln Speed (RPM).
+    *   Current Fuel Consumption Rate.
+    *   Current Clinker Production Rate.
+    *   Primary Air Flow, Secondary Air Flow.
+    *   Exhaust Gas Temperature and O2 levels.
+*   **Alerts and Notifications Summary:**
+    *   Display of active critical and warning alerts.
+    *   Quick access to detailed alert logs.
+*   **System Uptime/Downtime Status:**
+    *   Indication of continuous operation time.
+    *   History of recent downtime events.
+
+### 2. Predictive Quality Dashboard
+
+*   **Real-time f-CaO Prediction:**
+    *   Large, prominent display of the current predicted f-CaO value.
+    *   Confidence interval or prediction uncertainty.
+    *   Visual comparison against target f-CaO range (e.g., green for in-spec, yellow for warning, red for out-of-spec).
+*   **Historical f-CaO Trends:**
+    *   Interactive time-series charts showing predicted vs. actual f-CaO over various timeframes (last hour, 8 hours, 24 hours, 7 days).
+    *   Ability to zoom, pan, and select specific time ranges.
+*   **Correlation Analysis:**
+    *   Visualizations showing the correlation between f-CaO and other key operational parameters (e.g., kiln temperature, fuel consumption, raw material composition).
+*   **Predictive Quality Alerts:**
+    *   Notifications for predicted f-CaO deviations before they occur.
+    *   Root cause analysis suggestions based on model insights.
+
+### 3. AI Agent Actions & Recommendations
+
+*   **Action Log:**
+    *   Chronological list of all AI agent-initiated adjustments (e.g., "AI adjusted fuel rate by +2%").
+    *   Timestamp, parameter changed, old value, new value, reason/trigger.
+*   **Recommendation Queue:**
+    *   Display of pending AI recommendations for operator review.
+    *   Details of each recommendation (e.g., "Increase kiln speed by 0.5 RPM to optimize f-CaO").
+    *   Operator actions: Approve, Reject, Modify.
+*   **Impact Analysis:**
+    *   Visualization of the predicted impact of AI actions on key metrics (f-CaO, fuel consumption, emissions).
+*   **Agent Performance Metrics:**
+    *   Success rate of AI actions.
+    *   Number of interventions, false positives/negatives.
+
+### 4. Energy Cockpit
+
+*   **Real-time Fuel Consumption:**
+    *   Current fuel consumption rate (e.g., tons/hour, kWh).
+    *   Trend over time (hourly, daily, weekly).
+*   **Energy Efficiency Metrics:**
+    *   Specific Energy Consumption (SEC) per ton of clinker.
+    *   Comparison against targets and historical benchmarks.
+*   **Cost Analysis:**
+    *   Estimated operational cost related to fuel consumption.
+    *   Savings achieved due to AI optimization.
+*   **Emissions Monitoring:**
+    *   Real-time CO2 emissions data.
+    *   Compliance tracking against environmental regulations.
+
+### 5. Gemini AI Assistant
+
+*   **Natural Language Chat Interface:**
+    *   A dedicated chat window for operators to interact with the Gemini AI.
+    *   Ability to ask questions about kiln operations, historical data, maintenance, and troubleshooting.
+    *   Examples: "What was the average kiln temperature last shift?", "Show me the trend of raw material feed rate for the past 24 hours," "Why is f-CaO trending high?"
+*   **Contextual Information Retrieval:**
+    *   AI provides relevant data, charts, and documentation snippets in response to queries.
+*   **Action Initiation (via AI):**
+    *   Potentially, the ability for the AI to suggest or even initiate (with operator approval) certain actions based on conversational context.
+*   **Learning and Feedback:**
+    *   Mechanisms for operators to provide feedback on AI responses to improve its accuracy and helpfulness.
+
+### 6. General Dashboard Features
+
+*   **User Authentication and Authorization:** Secure login, role-based access control.
+*   **Responsive Design:** Optimized for desktop, tablet, and mobile devices.
+*   **Customizable Layouts:** Operators can personalize their dashboard view.
+*   **Historical Data Access:** Ability to query and visualize historical data for all parameters.
+*   **Reporting and Export:** Generate reports (PDF, CSV) of operational data and performance metrics.
+*   **User Management:** Admin interface for managing users and permissions.
+*   **Audit Trails:** Log of all operator and AI actions for compliance and analysis.
