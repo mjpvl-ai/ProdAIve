@@ -1,0 +1,7 @@
+pandas
+numpy
+google-cloud-bigquery
+scikit-learn
+joblib
+google-auth-oauthlib
+google-cloud-storage
