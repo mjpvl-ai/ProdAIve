@@ -168,8 +168,12 @@ Our design philosophy for the frontend dashboard is to create a modern, clean, a
     *   Successfully installed all required dependencies.
 *   **Authentication:**
     *   Resolved Google Cloud authentication issues by using a service account key.
+*   **Frontend Dashboard Setup:**
+    *   Initialized a new React project using Vite in the `frontend_dashboard/` directory.
+    *   Installed all necessary frontend dependencies.
+    *   Started the frontend development server in the background.
 
 ### Next Steps
 
 *   **Model Training:** Begin the development of the predictive models (CRNN and BO-LightGBM) using the data in BigQuery.
-*   **Frontend Dashboard:** Start the initial setup of the frontend dashboard project.
+*   **Frontend Dashboard Development:** Begin implementing the core UI components and integrating with mock data or a preliminary API.
