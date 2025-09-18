@@ -172,6 +172,9 @@ Our design philosophy for the frontend dashboard is to create a modern, clean, a
     *   Initialized a new React project using Vite in the `frontend_dashboard/` directory.
     *   Installed all necessary frontend dependencies.
     *   Started the frontend development server in the background.
+*   **Frontend Deployment:**
+    *   Successfully deployed the frontend UI to Firebase Hosting.
+    *   **Hosting URL:** https://prodaive-3902a.web.app
 
 ### Next Steps
 
