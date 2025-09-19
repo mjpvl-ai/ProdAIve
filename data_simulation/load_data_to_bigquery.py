@@ -2,8 +2,6 @@ from google.cloud import bigquery
 import os
 
 # --- Configuration --- #
-# IMPORTANT: Replace with your actual GCP Project ID
-PROJECT_ID = "operations-472416" 
 DATASET_ID = "kiln_data_dataset"
 TABLE_ID = "simulated_kiln_data"
 CSV_FILE_PATH = "data_simulation/simulated_kiln_data.csv"
@@ -19,8 +17,8 @@ schema = [
     bigquery.SchemaField("motor_current_draw", "FLOAT", mode="REQUIRED"),
 ]
 
-def create_dataset_and_table():
-    client = bigquery.Client(project=PROJECT_ID)
+def create_dataset_and_table(project_id):
+    client = bigquery.Client(project=project_id)
     dataset_ref = client.dataset(DATASET_ID)
     table_ref = dataset_ref.table(TABLE_ID)
 
@@ -43,9 +41,9 @@ def create_dataset_and_table():
         client.create_table(table)
         print(f"Table '{TABLE_ID}' created with schema.")
 
-def load_csv_to_bigquery():
-    client = bigquery.Client(project=PROJECT_ID)
-    table_id = f"{PROJECT_ID}.{DATASET_ID}.{TABLE_ID}"
+def load_csv_to_bigquery(project_id):
+    client = bigquery.Client(project=project_id)
+    table_id = f"{project_id}.{DATASET_ID}.{TABLE_ID}"
 
     job_config = bigquery.LoadJobConfig(
         schema=schema,
@@ -61,10 +59,3 @@ def load_csv_to_bigquery():
     job.result()  # Waits for the job to complete.
 
     print(f"Loaded {job.output_rows} rows into {table_id}.")
-
-if __name__ == "__main__":
-    print("Creating BigQuery dataset and table...")
-    create_dataset_and_table()
-    print("Loading simulated data to BigQuery...")
-    load_csv_to_bigquery()
-    print("Data loading to BigQuery complete.")

@@ -17,3 +17,6 @@ operations-472416-5b97c6d1c77a.json
 # Python cache
 __pycache__/
 *.pyc
+
+# Node modules
+node_modules/

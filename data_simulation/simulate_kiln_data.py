@@ -35,11 +35,3 @@ def generate_kiln_data(num_days=7, start_date=datetime(2023, 1, 1)):
     
     df = pd.DataFrame(data)
     return df
-
-if __name__ == "__main__":
-    print("Generating simulated kiln data...")
-    simulated_data = generate_kiln_data(num_days=7)
-    output_path = 'data_simulation/simulated_kiln_data.csv'
-    simulated_data.to_csv(output_path, index=False)
-    print(f"Simulated data saved to {output_path}")
-    print(simulated_data.head())
