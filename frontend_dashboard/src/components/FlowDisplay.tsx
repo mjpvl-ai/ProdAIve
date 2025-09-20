@@ -62,10 +62,11 @@ const sopData: { [key: string]: { title: string; content: string; highlight: str
 const SOPViewer: React.FC<{ title: string; content: string; highlight: string }> = ({ title, content, highlight }) => {
   const theme = useTheme();
   const parts = content.split(new RegExp(`(${highlight})`, 'gi'));
+  const highlightBgColor = alpha(theme.palette.warning.main, 0.4);
   return (
     <Paper elevation={4} sx={{ p: 2, height: '100%', overflowY: 'auto', borderLeft: `4px solid ${theme.palette.primary.main}` }}>
       <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center', mb: 2 }}><MenuBookIcon sx={{ mr: 1 }} /> {title}</Typography>
-      <Typography component="pre" sx={{ whiteSpace: 'pre-wrap', fontFamily: 'inherit', fontSize: '0.9rem', lineHeight: 1.7 }}>{parts.map((part, i) => part.toLowerCase() === highlight.toLowerCase() ? <Box component="mark" key={i} sx={{ bgcolor: alpha(theme.palette.warning.main, 0.4), p: 0.5, borderRadius: 1 }}>{part}</Box> : part)}</Typography>
+      <Typography component="div" sx={{ whiteSpace: 'pre-wrap', fontFamily: 'inherit', fontSize: '0.9rem', lineHeight: 1.7 }}>{parts.map((part, i) => part.toLowerCase() === highlight.toLowerCase() ? <Box component="mark" key={i} sx={{ bgcolor: highlightBgColor, p: 0.5, borderRadius: 1 }}>{part}</Box> : part)}</Typography>
     </Paper>
   );
 };
