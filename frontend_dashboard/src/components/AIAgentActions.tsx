@@ -29,11 +29,11 @@ const AIAgentActions: React.FC = () => {
   };
 
   return (
-    <Box sx={{ py: 3, px: 0.75 }}>
+    <Box>
       <Typography variant="h4" gutterBottom sx={{ fontWeight: 700, mb: 3 }}>AI Agent Actions & Recommendations</Typography>
 
       <Grid container spacing={4}>
-        <Grid item xs={12} md={6} component="div">
+        <Grid item xs={12} lg={6}>
           <Paper elevation={2} sx={{ p: 3, borderRadius: 2 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
               <History sx={{ mr: 1.5, color: 'primary.main' }} />
@@ -62,7 +62,7 @@ const AIAgentActions: React.FC = () => {
           </Paper>
         </Grid>
 
-        <Grid item xs={12} md={6} component="div">
+        <Grid item xs={12} lg={6}>
           <Paper elevation={2} sx={{ p: 3, borderRadius: 2 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
               <LightbulbOutlined sx={{ mr: 1.5, color: 'secondary.main' }} />

@@ -1,13 +1,11 @@
 import React, { useState } from 'react';
-import { AppBar, Toolbar, IconButton, Typography, InputBase, Box, Badge, Avatar, Menu, MenuItem, Divider } from '@mui/material';
+import { AppBar, Toolbar, IconButton, Typography, InputBase, Box, Badge, Avatar, Menu, MenuItem, Divider, Button } from '@mui/material';
 import { styled, alpha } from '@mui/material/styles';
 
 // --- Icon Imports ---
-import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
 import NotificationsOutlinedIcon from '@mui/icons-material/NotificationsOutlined';
-import SmartToyOutlinedIcon from '@mui/icons-material/SmartToyOutlined';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import SmartToyOutlinedIcon from '@mui/icons-material/SmartToyOutlined'; 
 
 // --- Styled Components for a more refined look ---
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
@@ -61,15 +59,22 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 interface HeaderBarProps {
-  onSidebarToggle: () => void;
   onAIAssistantToggle: () => void;
   onAIAssistantFullscreenToggle: () => void; // This is illustrative; not used directly here but good practice
-  sidebarOpen: boolean;
   aiAssistantOpen: boolean;
   currentView: string;
+  onSelectView: (view: string) => void;
+  menuItems: { text: string; view: string; icon: React.ReactNode }[];
 }
 
-const HeaderBar: React.FC<HeaderBarProps> = ({ onSidebarToggle, onAIAssistantToggle, sidebarOpen, aiAssistantOpen, currentView, onAIAssistantFullscreenToggle }) => {
+const HeaderBar: React.FC<HeaderBarProps> = ({
+  onAIAssistantToggle,
+  aiAssistantOpen,
+  currentView,
+  onAIAssistantFullscreenToggle,
+  onSelectView,
+  menuItems
+}) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [notificationsAnchorEl, setNotificationsAnchorEl] = useState<null | HTMLElement>(null);
   const [profileAnchorEl, setProfileAnchorEl] = useState<null | HTMLElement>(null);
@@ -98,31 +103,29 @@ const HeaderBar: React.FC<HeaderBarProps> = ({ onSidebarToggle, onAIAssistantTog
   return (
     <StyledAppBar position="fixed">
       <Toolbar>
-        <IconButton
-          color="inherit"
-          aria-label="toggle sidebar"
-          onClick={onSidebarToggle}
-          edge="start"
-          sx={{ mr: 2 }}
-        >
-          {sidebarOpen ? <ChevronLeftIcon /> : <MenuIcon />}
-        </IconButton>
         <Typography
           variant="h5" // Slightly larger for prominence
           noWrap
           component="div"
-          sx={{ fontWeight: 700, color: 'primary.main', mr: 1 }} // Use primary color and bold
+          sx={{ fontWeight: 700, color: 'primary.main', mr: 4 }} // Use primary color and bold
         >
           ProdAIve
         </Typography>
-        <Typography
-          variant="h6"
-          noWrap
-          component="div"
-          sx={{ flexGrow: 1, fontWeight: 600, color: 'text.secondary' }} // Subtler color for current view
-        >
-          | {currentView}
-        </Typography>
+
+        {/* Integrated Navigation */}
+        <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 1 }}>
+          {menuItems.map((item) => (
+            <Button
+              key={item.text}
+              onClick={() => onSelectView(item.view)}
+              variant={currentView === item.view ? 'contained' : 'text'}
+              color={currentView === item.view ? 'primary' : 'inherit'}
+              startIcon={item.icon}
+            >
+              {item.text}
+            </Button>
+          ))}
+        </Box>
 
         <Search>
           <SearchIconWrapper>

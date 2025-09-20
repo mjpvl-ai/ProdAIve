@@ -63,7 +63,7 @@ const StatusChip: React.FC<{ status: string }> = ({ status }) => {
 };
 
 const ParameterCard: React.FC<{ title: string; value: number; unit: string; icon: React.ReactNode }> = ({ title, value, unit, icon }) => (
-  <Grid xs={12} sm={6} md={4} component="div">
+  <Grid item xs={12} sm={6} md={4}>
     <Paper elevation={2} sx={{ height: '100%', p: 2, borderRadius: 2, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
         <Typography variant="subtitle1" color="text.secondary">{title}</Typography>
@@ -86,7 +86,7 @@ const AlertCard: React.FC<{ alert: typeof recentAlerts[0] }> = ({ alert }) => {
   const config = alertConfig[alert.type as keyof typeof alertConfig];
 
   return (
-    <Grid xs={12} component="div">
+    <Grid item xs={12}>
       <Paper elevation={2} sx={{ display: 'flex', alignItems: 'center', p: 2, borderRadius: 2, borderLeft: `4px solid ${config.color}` }}>
         <Box sx={{ mr: 2, color: config.color }}>{config.icon}</Box>
         <Box>
@@ -99,22 +99,61 @@ const AlertCard: React.FC<{ alert: typeof recentAlerts[0] }> = ({ alert }) => {
 };
 
 
+const TemperatureTrendChart: React.FC<{ data: any[] }> = ({ data }) => {
+  const theme = useTheme();
+  return (
+    <ResponsiveContainer width="100%" height="100%">
+      <AreaChart data={data}>
+        <defs>
+          <linearGradient id="tempGradientOverview" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="5%" stopColor={theme.palette.secondary.main} stopOpacity={0.7} />
+            <stop offset="95%" stopColor={theme.palette.secondary.main} stopOpacity={0} />
+          </linearGradient>
+        </defs>
+        <CartesianGrid strokeDasharray="3 3" strokeOpacity={0.2} />
+        <XAxis dataKey="time" stroke={theme.palette.text.secondary} />
+        <YAxis stroke={theme.palette.text.secondary} />
+        <Tooltip contentStyle={{ backgroundColor: 'rgba(255, 255, 255, 0.9)', borderColor: theme.palette.divider, borderRadius: theme.shape.borderRadius, boxShadow: theme.shadows[3] }} />
+        <Legend />
+        <ReferenceLine y={1480} label={{ value: 'Critical', position: 'insideTopLeft' }} stroke="red" strokeDasharray="3 3" />
+        <ReferenceLine y={1460} label={{ value: 'Warning', position: 'insideTopLeft' }} stroke="orange" strokeDasharray="3 3" />
+        <Area type="monotone" dataKey="temp" name="Temperature (°C)" stroke={theme.palette.secondary.dark} strokeWidth={2} fill="url(#tempGradientOverview)" />
+      </AreaChart>
+    </ResponsiveContainer>
+  );
+};
 
+const PressureOxygenChart: React.FC<{ data: any[] }> = ({ data }) => {
+  const theme = useTheme();
+  return (
+    <ResponsiveContainer width="100%" height="100%">
+      <LineChart data={data}>
+        <CartesianGrid strokeDasharray="3 3" strokeOpacity={0.2} />
+        <XAxis dataKey="time" stroke={theme.palette.text.secondary} />
+        <YAxis yAxisId="left" stroke={theme.palette.success.main} />
+        <YAxis yAxisId="right" orientation="right" stroke={theme.palette.info.main} />
+        <Tooltip contentStyle={{ backgroundColor: 'rgba(255, 255, 255, 0.9)', borderColor: theme.palette.divider, borderRadius: theme.shape.borderRadius, boxShadow: theme.shadows[3] }} />
+        <Legend />
+        <Line yAxisId="left" type="monotone" dataKey="pressure" name="Pressure (kPa)" stroke={theme.palette.success.main} strokeWidth={2} />
+        <Line yAxisId="right" type="monotone" dataKey="oxygen" name="Oxygen (%)" stroke={theme.palette.info.main} strokeWidth={2} />
+      </LineChart>
+    </ResponsiveContainer>
+  );
+};
 
-const ChartCard: React.FC<any> = ({ title, children }) => (
-  <Grid xs={12} md={12} component="div">
+const ChartCard: React.FC<any> = ({ title, children, onClick }) => (
+  <Grid item xs={12}>
     <Paper elevation={2} sx={{ p: 3, borderRadius: 2, height: '100%', display: 'flex', flexDirection: 'column', minHeight: 350 }}>
       <Typography variant="h6" gutterBottom sx={{ fontWeight: 600 }}>{title}</Typography>
-      <Box sx={{ flex: 1, mt: 2 }}>
+      <Box sx={{ flex: 1, mt: 2, cursor: onClick ? 'pointer' : 'default' }} onClick={onClick}>
         {children}
       </Box>
     </Paper>
-  </Grid>
-);
+  </Grid>);
 
 
 // --- Main Component ---
-const KilnHealthOverview: React.FC = () => {
+const KilnHealthOverview: React.FC<{ onChartClick?: (element: React.ReactNode, title: string) => void }> = ({ onChartClick }) => {
   const theme = useTheme();
   const [timeRange, setTimeRange] = useState('8hours');
 
@@ -125,10 +164,10 @@ const KilnHealthOverview: React.FC = () => {
   const data = mockKilnData[timeRange as keyof typeof mockKilnData];
 
   return (
-    <Box sx={{ py: 3 }}>
+    <Box>
       <Grid container spacing={3}>
-        {/* Header */}
-        <Grid xs={12} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }} component="div">
+        {/* Header and Status */}
+        <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }} component="div">
           <Box>
             <Typography variant="h4" sx={{ fontWeight: 700 }}>Kiln Health Overview</Typography>
             <Typography color="text.secondary">Detailed analysis of kiln performance and health metrics.</Typography>
@@ -136,8 +175,8 @@ const KilnHealthOverview: React.FC = () => {
           <StatusChip status="Operational" />
         </Grid>
 
-        {/* Key Parameters */}
-        <Grid xs={12}>
+        {/* Key Operational Parameters */}
+        <Grid item xs={12} component="div">
           <Typography variant="h5" sx={{ fontWeight: 600, mb: 2 }}>Key Operational Parameters</Typography>
           <Grid container spacing={2}>
             <ParameterCard title="Kiln Speed" value={operationalParameters.kilnSpeed.value} unit={operationalParameters.kilnSpeed.unit} icon={operationalParameters.kilnSpeed.icon} />
@@ -149,8 +188,8 @@ const KilnHealthOverview: React.FC = () => {
           </Grid>
         </Grid>
 
-        {/* Trends Section */}
-        <Grid xs={12} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 2 }}>
+        {/* Trends Section Header */}
+        <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 2 }} component="div">
           <Typography variant="h5" sx={{ fontWeight: 600 }}>Kiln Trends</Typography>
           <FormControl sx={{ minWidth: 150 }} size="small">
             <InputLabel>Time Range</InputLabel>
@@ -162,44 +201,27 @@ const KilnHealthOverview: React.FC = () => {
           </FormControl>
         </Grid>
 
-        <ChartCard title="Temperature Trend">
-          <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={data}>
-              <defs>
-                <linearGradient id="tempGradientOverview" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor={theme.palette.secondary.main} stopOpacity={0.7}/>
-                  <stop offset="95%" stopColor={theme.palette.secondary.main} stopOpacity={0}/>
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" strokeOpacity={0.2} />
-              <XAxis dataKey="time" stroke={theme.palette.text.secondary} />
-              <YAxis stroke={theme.palette.text.secondary} />
-              <Tooltip contentStyle={{ backgroundColor: 'rgba(255, 255, 255, 0.9)', borderColor: theme.palette.divider, borderRadius: theme.shape.borderRadius, boxShadow: theme.shadows[3] }} />
-              <Legend />
-              <ReferenceLine y={1480} label={{ value: 'Critical', position: 'insideTopLeft' }} stroke="red" strokeDasharray="3 3" />
-              <ReferenceLine y={1460} label={{ value: 'Warning', position: 'insideTopLeft' }} stroke="orange" strokeDasharray="3 3" />
-              <Area type="monotone" dataKey="temp" name="Temperature (°C)" stroke={theme.palette.secondary.dark} strokeWidth={2} fill="url(#tempGradientOverview)" />
-            </AreaChart>
-          </ResponsiveContainer>
-        </ChartCard>
+        {/* Trend Charts */}
+        <Grid item xs={12} component="div">
+          <Grid container spacing={3}>
+            <ChartCard
+              title="Temperature Trend"
+              onClick={onChartClick ? () => onChartClick(<TemperatureTrendChart data={data} />, 'Temperature Trend') : undefined}
+            >
+              <TemperatureTrendChart data={data} />
+            </ChartCard>
 
-        <ChartCard title="Pressure & Oxygen Levels">
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={data}>
-              <CartesianGrid strokeDasharray="3 3" strokeOpacity={0.2} />
-              <XAxis dataKey="time" stroke={theme.palette.text.secondary} />
-              <YAxis yAxisId="left" stroke={theme.palette.success.main} />
-              <YAxis yAxisId="right" orientation="right" stroke={theme.palette.info.main} />
-              <Tooltip contentStyle={{ backgroundColor: 'rgba(255, 255, 255, 0.9)', borderColor: theme.palette.divider, borderRadius: theme.shape.borderRadius, boxShadow: theme.shadows[3] }} />
-              <Legend />
-              <Line yAxisId="left" type="monotone" dataKey="pressure" name="Pressure (kPa)" stroke={theme.palette.success.main} strokeWidth={2} />
-              <Line yAxisId="right" type="monotone" dataKey="oxygen" name="Oxygen (%)" stroke={theme.palette.info.main} strokeWidth={2} />
-            </LineChart>
-          </ResponsiveContainer>
-        </ChartCard>
+            <ChartCard
+              title="Pressure & Oxygen Levels"
+              onClick={onChartClick ? () => onChartClick(<PressureOxygenChart data={data} />, 'Pressure & Oxygen Levels') : undefined}
+            >
+              <PressureOxygenChart data={data} />
+            </ChartCard>
+          </Grid>
+        </Grid>
 
         {/* Recent Alerts */}
-        <Grid xs={12} mt={2}>
+        <Grid item xs={12} mt={2} component="div">
           <Typography variant="h5" sx={{ fontWeight: 600, mb: 2 }}>Recent Alerts</Typography>
           <Grid container spacing={2}>
             {recentAlerts.map(alert => <AlertCard key={alert.id} alert={alert} />)}

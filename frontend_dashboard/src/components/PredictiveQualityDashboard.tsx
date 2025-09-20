@@ -72,7 +72,60 @@ const cardVariants = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
 };
 
-const PredictiveQualityDashboard: React.FC = () => {
+interface PredictiveQualityDashboardProps {
+  onChartClick?: (element: React.ReactNode, title: string) => void;
+}
+
+const FcaoTrendChart: React.FC<{ data: any[] }> = ({ data }) => {
+  const theme = useTheme();
+  return (
+    <ResponsiveContainer width="100%" height="100%">
+      <LineChart data={data}>
+        <CartesianGrid strokeDasharray="3 3" strokeOpacity={0.2} />
+        <XAxis dataKey="name" stroke={theme.palette.text.secondary} />
+        <YAxis stroke={theme.palette.text.secondary} />
+        <Tooltip
+          contentStyle={{ backgroundColor: 'rgba(255, 255, 255, 0.9)', borderColor: theme.palette.divider, borderRadius: theme.shape.borderRadius, boxShadow: theme.shadows[3] }}
+          formatter={(value: number) => [`${value.toFixed(2)}%`, 'f-CaO']}
+          labelFormatter={(label: string) => `Time: ${label}`}
+        />
+        <Legend />
+        <ReferenceArea y1={targetFCAOMin} y2={targetFCAOMax} strokeOpacity={0.3} fill={theme.palette.success.light} />
+        <Line type="monotone" dataKey="fcao" name="f-CaO" stroke={theme.palette.primary.main} strokeWidth={2} activeDot={{ r: 8 }} />
+      </LineChart>
+    </ResponsiveContainer>
+  );
+};
+
+const CorrelationChart: React.FC<{ data: any[] }> = ({ data }) => {
+  const theme = useTheme();
+  return (
+    <ResponsiveContainer width="100%" height="100%">
+      <ScatterChart data={data}>
+        <CartesianGrid strokeDasharray="3 3" strokeOpacity={0.2} />
+        <XAxis type="number" dataKey="temp" name="Kiln Temperature" unit="°C" stroke={theme.palette.text.secondary} />
+        <YAxis type="number" dataKey="fcao" name="f-CaO" unit="%" stroke={theme.palette.text.secondary} />
+        <Tooltip cursor={{ strokeDasharray: '3 3' }} contentStyle={{ backgroundColor: 'rgba(255, 255, 255, 0.9)', borderColor: theme.palette.divider, borderRadius: theme.shape.borderRadius, boxShadow: theme.shadows[3] }} />
+        <Legend />
+        <Scatter name="f-CaO vs Temp" fill={theme.palette.secondary.main} />
+      </ScatterChart>
+    </ResponsiveContainer>
+  );
+};
+
+const ChartCard: React.FC<any> = ({ title, children, onClick, headerContent }) => (
+  <Paper component={motion.div} variants={cardVariants} sx={{ height: '100%', p: 3, borderRadius: 2, boxShadow: 3, display: 'flex', flexDirection: 'column', minHeight: 350 }}>
+    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+      <Typography variant="h6" sx={{ fontWeight: 600 }}>{title}</Typography>
+      {headerContent}
+    </Box>
+    <Box sx={{ flex: 1, height: '300px', cursor: onClick ? 'pointer' : 'default' }} onClick={onClick}>
+      {children}
+    </Box>
+  </Paper>
+);
+
+const PredictiveQualityDashboard: React.FC<PredictiveQualityDashboardProps> = ({ onChartClick }) => {
   const theme = useTheme();
   const [timeRange, setTimeRange] = useState('7days');
 
@@ -146,9 +199,10 @@ const PredictiveQualityDashboard: React.FC = () => {
         </Grid>
 
         <Grid item xs={12} md={8}>
-          <Paper component={motion.div} variants={cardVariants} sx={{ height: '100%', p: 3, borderRadius: 2, boxShadow: 3, display: 'flex', flexDirection: 'column', minHeight: 350 }}>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-              <Typography variant="h6" sx={{ fontWeight: 600 }}>Historical f-CaO Trends</Typography>
+          <ChartCard
+            title="Historical f-CaO Trends"
+            onClick={onChartClick ? () => onChartClick(<FcaoTrendChart data={fcaoData[timeRange as keyof typeof fcaoData]} />, 'Historical f-CaO Trends') : undefined}
+            headerContent={
               <FormControl sx={{ minWidth: 150 }} size="small">
                 <InputLabel>Time Range</InputLabel>
                 <Select value={timeRange} label="Time Range" onChange={handleTimeRangeChange}>
@@ -157,47 +211,19 @@ const PredictiveQualityDashboard: React.FC = () => {
                   <MenuItem value={"30days"}>Last 30 Days</MenuItem>
                 </Select>
               </FormControl>
-            </Box>
-            <Box id="fcao-chart-container" sx={{ flex: 1, height: '300px' }}>
-              
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={fcaoData[timeRange as keyof typeof fcaoData]}>
-                  <CartesianGrid strokeDasharray="3 3" strokeOpacity={0.2} />
-                  <XAxis dataKey="name" stroke={theme.palette.text.secondary} />
-                  <YAxis stroke={theme.palette.text.secondary} />
-                  <Tooltip 
-                    contentStyle={{ backgroundColor: 'rgba(255, 255, 255, 0.9)', borderColor: theme.palette.divider, borderRadius: theme.shape.borderRadius, boxShadow: theme.shadows[3] }}
-                    formatter={(value: number) => [`${value.toFixed(2)}%`, 'f-CaO']}
-                    labelFormatter={(label: string) => `Time: ${label}`}
-                  />
-                  <Legend />
-                  <ReferenceArea y1={targetFCAOMin} y2={targetFCAOMax} strokeOpacity={0.3} fill={theme.palette.success.light} />
-                  <Line type="monotone" dataKey="fcao" name="f-CaO" stroke={theme.palette.primary.main} strokeWidth={2} activeDot={{ r: 8 }} />
-                </LineChart>
-              </ResponsiveContainer>
-            </Box>
-          </Paper>
+            }
+          >
+            <FcaoTrendChart data={fcaoData[timeRange as keyof typeof fcaoData]} />
+          </ChartCard>
         </Grid>
 
-        <Grid item xs={12}>
-          <Paper component={motion.div} variants={cardVariants} sx={{ p: 3, borderRadius: 2, boxShadow: 3, display: 'flex', flexDirection: 'column', minHeight: 350 }}>
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-              <Typography variant="h6" sx={{ fontWeight: 600 }}>Correlation Analysis: Kiln Temperature vs. f-CaO</Typography>
-            </Box>
-            <Box id="correlation-chart-container" sx={{ flex: 1, height: '300px' }}>
-              <ResponsiveContainer width="100%" height="100%">
-                
-                <ScatterChart>
-                  <CartesianGrid strokeDasharray="3 3" strokeOpacity={0.2} />
-                  <XAxis type="number" dataKey="temp" name="Kiln Temperature" unit="°C" stroke={theme.palette.text.secondary} />
-                  <YAxis type="number" dataKey="fcao" name="f-CaO" stroke={theme.palette.text.secondary} />
-                  <Tooltip cursor={{ strokeDasharray: '3 3' }} contentStyle={{ backgroundColor: 'rgba(255, 255, 255, 0.9)', borderColor: theme.palette.divider, borderRadius: theme.shape.borderRadius, boxShadow: theme.shadows[3] }} />
-                  <Legend />
-                  <Scatter name="f-CaO vs Temp" data={correlationData[timeRange as keyof typeof correlationData]} fill={theme.palette.secondary.main} />
-                </ScatterChart>
-              </ResponsiveContainer>
-            </Box>
-          </Paper>
+        <Grid item xs={12} md={4}>
+          <ChartCard
+            title="Correlation Analysis: Kiln Temperature vs. f-CaO"
+            onClick={onChartClick ? () => onChartClick(<CorrelationChart data={correlationData[timeRange as keyof typeof correlationData]} />, 'Correlation Analysis: Kiln Temperature vs. f-CaO') : undefined}
+          >
+            <CorrelationChart data={correlationData[timeRange as keyof typeof correlationData]} />
+          </ChartCard>
         </Grid>
       </Grid>
     </motion.div>

@@ -136,32 +136,32 @@ const EnergyCockpit: React.FC<EnergyCockpitProps> = ({ onChartClick }) => {
 
   return (
     <motion.div initial="hidden" animate="visible" transition={{ staggerChildren: 0.1 }}>
-      <Box sx={{ py: 3, px: 0.75 }}>
+      <Box>
       <Typography variant="h4" gutterBottom sx={{ fontWeight: 700 }}>Energy Cockpit</Typography>
-
-      <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'repeat(2, 1fr)' }, gap: 3, mt: 4 }}>
-        <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: 3 }}>
+      
+      <Box sx={{ display: 'grid', gridTemplateColumns: '1fr', gap: 3, mt: 4 }}>
+        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', lg: 'repeat(4, 1fr)' }, gap: 3 }}>
           <EnergyCockpitCard title="Real-time Fuel Consumption" value={fuelConsumption.currentRate} unit="tons/hour" status={fuelConsumption.trend} description={`Daily Average: ${fuelConsumption.dailyAverage} t/hr`} />
           <EnergyCockpitCard title="Energy Efficiency (SEC)" value={energyEfficiency.sec} unit="kWh/ton" status={energyEfficiency.trend} description={`Target: ${energyEfficiency.target} kWh/ton`} />
           <EnergyCockpitCard title="Cost Analysis" value={`${costAnalysis.estimatedDailyCost.toLocaleString()}`} unit="/ day" description={`Savings Today: ${costAnalysis.savingsToday}`} />
           <EnergyCockpitCard title="Emissions Monitoring (CO2)" value={emissionsMonitoring.currentCO2} unit="t/ton" status={emissionsMonitoring.trend} description={`Limit: ${emissionsMonitoring.limit} t/ton`} />
         </Box>
 
-        <Paper component={motion.div} variants={cardVariants} sx={{ p: 3, borderRadius: 2, boxShadow: 3, display: 'flex', flexDirection: 'column', minHeight: 400 }}>
+        <Paper component={motion.div} variants={cardVariants} sx={{ p: 3, borderRadius: 2, boxShadow: 3, display: 'flex', flexDirection: 'column', minHeight: 450 }}>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
             <Typography variant="h6" sx={{ fontWeight: 600 }}>Energy Consumption Trend</Typography>
             <FormControl sx={{ minWidth: 150 }} size="small">
               <InputLabel>Time Range</InputLabel>
               <Select value={timeRange} label="Time Range" onChange={(e: any) => setTimeRange(e.target.value as string)}>
-                <MenuItem value={"24hours"}>Last 24 Hours</MenuItem>
-                <MenuItem value={"7days"}>Last 7 Days</MenuItem>
-                <MenuItem value={"30days"}>Last 30 Days</MenuItem>
+                <MenuItem value="24hours">Last 24 Hours</MenuItem>
+                <MenuItem value="7days">Last 7 Days</MenuItem>
+                <MenuItem value="30days">Last 30 Days</MenuItem>
               </Select>
             </FormControl>
           </Box>
           <Box
             id="energy-chart-container"
-            sx={{ flex: 1, cursor: 'pointer' }}
+            sx={{ flex: 1, cursor: 'pointer', minHeight: '350px' }}
             onClick={() => onChartClick(<EnergyTrendChart />, 'Energy Consumption Trend')}
           >
             <EnergyTrendChart />

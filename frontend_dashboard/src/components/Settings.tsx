@@ -39,9 +39,9 @@ const Settings: React.FC = () => {
 
   return (
     <motion.div initial="hidden" animate="visible" transition={{ staggerChildren: 0.1 }}>
-      <Box sx={{ py: 3, px: 0.75 }}>
-        <Typography variant="h4" gutterBottom sx={{ fontWeight: 700, mb: 4 }}>Settings</Typography>
-
+      <Typography variant="h4" gutterBottom sx={{ fontWeight: 700, mb: 4 }}>Settings</Typography>
+      
+      <Box sx={{ maxWidth: 960, mx: 'auto' }}>
         <Paper component={motion.div} variants={cardVariants} sx={{ p: 3, mb: 3, borderRadius: 2, boxShadow: 3 }}>
           <Typography variant="h6" gutterBottom>Appearance</Typography>
           <FormControlLabel
@@ -90,7 +90,6 @@ const Settings: React.FC = () => {
             <Button variant="contained" onClick={handleProfileSave} sx={{ mt: 2 }}>Save Profile</Button>
           </Box>
         </Paper>
-
       </Box>
     </motion.div>
   );

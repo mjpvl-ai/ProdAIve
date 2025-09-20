@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Box, Typography, Paper, IconButton, TextField, List, ListItem, Avatar, Chip, Button } from '@mui/material';
-import { useTheme } from '@mui/material/styles';
+import { useTheme, alpha } from '@mui/material/styles';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AreaChart, Area, Tooltip, ResponsiveContainer } from 'recharts';
 import SmartToyOutlinedIcon from '@mui/icons-material/SmartToyOutlined';
@@ -35,6 +35,8 @@ interface GeminiAIAssistantProps {
   onPositionChange: (position: Position) => void;
   isFullScreen: boolean;
   onToggleFullScreen: () => void;
+  alert: Alert | null;
+  onSelectView: (view: string) => void;
 }
 
 interface Alert {
@@ -44,7 +46,7 @@ interface Alert {
 type AssistantMode = 'chat' | 'voice';
 type ConversationState = 'idle' | 'listening' | 'speaking' | 'alerting';
 
-const GeminiAIAssistant: React.FC<GeminiAIAssistantProps> = ({ onTriggerAlert, position, onPositionChange, isFullScreen, onToggleFullScreen }) => {
+const GeminiAIAssistant: React.FC<GeminiAIAssistantProps> = ({ onTriggerAlert, position, onPositionChange, isFullScreen, onToggleFullScreen, alert, onSelectView }) => {
   const theme = useTheme();
   const [mode, setMode] = useState<AssistantMode>('voice');
   const [conversationState, setConversationState] = useState<ConversationState>('idle');
@@ -58,10 +60,6 @@ const GeminiAIAssistant: React.FC<GeminiAIAssistantProps> = ({ onTriggerAlert, p
   const scrollRef = useRef<null | HTMLDivElement>(null);
   const [activeAlert, setActiveAlert] = useState<Alert | null>(null);
 
-  const dragInfo = useRef<{ type: string; startX: number; startY: number; startWidth: number; startHeight: number; startTop: number; startLeft: number } | null>(null);
-  const MIN_WIDTH = 300;
-  const MIN_HEIGHT = 400;
-
   // --- Animation Keyframes for the Blob ---
   const morph = keyframes`
     0% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
@@ -74,113 +72,30 @@ const GeminiAIAssistant: React.FC<GeminiAIAssistantProps> = ({ onTriggerAlert, p
     to { transform: rotate(360deg); }
   `;
 
+  const pulseAnimation = keyframes`
+    0% {
+      transform: scale(0.95);
+      box-shadow: 0 0 0 0 ${alpha(theme.palette.error.main, 0.7)};
+    }
+    70% {
+      transform: scale(1);
+      box-shadow: 0 0 0 20px ${alpha(theme.palette.error.main, 0)};
+    }
+    100% { transform: scale(0.95); }
+  `;
   useEffect(() => {
     if (mode === 'chat' && scrollRef.current) {
       scrollRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   }, [messages, mode]);
 
-  // --- Dragging and Resizing Logic ---
-  const handleMouseDown = (e: React.MouseEvent, type: string) => {
-    e.preventDefault();
-    e.stopPropagation();
-    dragInfo.current = {
-      type,
-      startX: e.clientX,
-      startY: e.clientY,
-      startWidth: position.width,
-      startHeight: position.height,
-      startTop: position.top,
-      startLeft: position.left,
-    };
-    document.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseup', handleMouseUp);
-  };
-
-  const handleMouseMove = (e: MouseEvent) => {
-    if (!dragInfo.current) return;
-
-    const dx = e.clientX - dragInfo.current.startX;
-    const dy = e.clientY - dragInfo.current.startY;
-
-    let newPos = { ...position };
-
-    if (dragInfo.current.type === 'drag') {
-      newPos.top = dragInfo.current.startTop + dy;
-      newPos.left = dragInfo.current.startLeft + dx;
-    } else {
-      // Resizing logic
-      if (dragInfo.current.type.includes('right')) {
-        newPos.width = Math.max(MIN_WIDTH, dragInfo.current.startWidth + dx);
-      }
-      if (dragInfo.current.type.includes('left')) {
-        const newWidth = Math.max(MIN_WIDTH, dragInfo.current.startWidth - dx);
-        if (newWidth > MIN_WIDTH) {
-          newPos.width = newWidth;
-          newPos.left = dragInfo.current.startLeft + dx;
-        }
-      }
-      if (dragInfo.current.type.includes('bottom')) {
-        newPos.height = Math.max(MIN_HEIGHT, dragInfo.current.startHeight + dy);
-      }
-      if (dragInfo.current.type.includes('top')) {
-        const newHeight = Math.max(MIN_HEIGHT, dragInfo.current.startHeight - dy);
-        if (newHeight > MIN_HEIGHT) {
-          newPos.height = newHeight;
-          newPos.top = dragInfo.current.startTop + dy;
-        }
-      }
-    }
-
-    // Boundary checks
-    newPos.top = Math.max(0, newPos.top);
-    newPos.left = Math.max(0, newPos.left);
-    if (newPos.left + newPos.width > window.innerWidth) {
-      newPos.left = window.innerWidth - newPos.width;
-    }
-    if (newPos.top + newPos.height > window.innerHeight) {
-      newPos.top = window.innerHeight - newPos.height;
-    }
-
-    onPositionChange(newPos);
-  };
-
-  const handleMouseUp = () => {
-    dragInfo.current = null;
-    document.removeEventListener('mousemove', handleMouseMove);
-    document.removeEventListener('mouseup', handleMouseUp);
-  };
-
-  // Cleanup event listeners on component unmount
   useEffect(() => {
-    const mouseUpHandler = () => handleMouseUp();
-    return () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', mouseUpHandler);
-    };
-  }, []);
-
-  // --- Alert Simulation with Recorded Voice ---
-  useEffect(() => {
-    // Preload the alert audio file.
-    // IMPORTANT: Place your recorded 'alert-voice.mp3' file in the `public/assets/` directory.
-    const alertAudio = new Audio('/assets/alert-voice.mp3');
-    alertAudio.preload = 'auto';
-
-    const alertTimeout = setTimeout(() => {
-      // This will now call the parent component to handle the alert logic
-      // We are targeting node '4' which is the 'failed' node in FlowDisplay
-      onTriggerAlert('4');
-      
-      alertAudio.play().catch(error => console.error("Error playing audio:", error));
-
-    }, 10000); // Trigger alert after 10 seconds
-    return () => {
-      clearTimeout(alertTimeout);
-      alertAudio.pause();
-      alertAudio.currentTime = 0;
-    };
-  }, [onTriggerAlert]);
+    if (alert) {
+      setMode('voice');
+      setConversationState('alerting');
+      setActiveAlert(alert);
+    }
+  }, [alert]);
 
   const handleModeToggle = () => {
     setMode(current => (current === 'chat' ? 'voice' : 'chat'));
@@ -290,11 +205,11 @@ const GeminiAIAssistant: React.FC<GeminiAIAssistantProps> = ({ onTriggerAlert, p
     }
   };
 
-  const suggestionChips = [
-    'Summarize energy usage',
-    'Any temperature anomalies?',
-    'Predict clinker quality',
-    'Show plan operations',
+  const suggestionChips: { text: string; view: string; query: string }[] = [
+    { text: 'Summarize energy usage', view: 'Energy Cockpit', query: 'Summarize energy usage' },
+    { text: 'Any temperature anomalies?', view: 'Kiln Health', query: 'Any temperature anomalies?' },
+    { text: 'Predict clinker quality', view: 'Predictive Quality', query: 'Predict clinker quality' },
+    { text: 'Show plan operations', view: 'AI Agent Actions', query: 'Show plan operations' },
   ];
 
   return (
@@ -310,35 +225,12 @@ const GeminiAIAssistant: React.FC<GeminiAIAssistantProps> = ({ onTriggerAlert, p
         overflow: 'hidden',
       }}>
       {!isFullScreen && (
-        <>
-          {/* Resizer Handles */}
-          {['top', 'bottom', 'left', 'right', 'topLeft', 'topRight', 'bottomLeft', 'bottomRight'].map(dir => {
-            const cursorMap: { [key: string]: string } = { top: 'ns-resize', bottom: 'ns-resize', left: 'ew-resize', right: 'ew-resize', topLeft: 'nwse-resize', topRight: 'nesw-resize', bottomLeft: 'nesw-resize', bottomRight: 'nwse-resize' };
-            return (
-              <Box
-                key={dir}
-                onMouseDown={(e) => handleMouseDown(e, dir)}
-                sx={{
-                  position: 'absolute',
-                  top: dir.includes('top') ? '-4px' : 'auto',
-                  bottom: dir.includes('bottom') ? '-4px' : 'auto',
-                  left: dir.includes('left') ? '-4px' : 'auto',
-                  right: dir.includes('right') ? '-4px' : 'auto',
-                  width: dir.includes('top') || dir.includes('bottom') ? '100%' : '8px',
-                  height: dir.includes('left') || dir.includes('right') ? '100%' : '8px',
-                  cursor: cursorMap[dir],
-                  zIndex: 10,
-                }}
-              />
-            );
-          })}
-        </>
+        <></>
       )}
       <Box
-        onMouseDown={(e) => handleMouseDown(e, 'drag')}
         sx={{
           p: 2, borderBottom: `1px solid ${theme.palette.divider}`, display: 'flex', alignItems: 'center',
-          cursor: isFullScreen ? 'default' : 'move',
+          cursor: 'default',
         }}
       >
         <Box sx={{ display: 'flex', alignItems: 'center', overflow: 'hidden' }}>
@@ -358,63 +250,68 @@ const GeminiAIAssistant: React.FC<GeminiAIAssistantProps> = ({ onTriggerAlert, p
 
       {mode === 'voice' ? (
         <>
-          <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', p: 2, position: 'relative' }}>
+          <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', p: 2, position: 'relative', textAlign: 'center' }}>
             <AnimatePresence>
-              <motion.div
-                initial={{ opacity: 0, scale: 0.5 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.5 }}
-                transition={{ duration: 0.5, ease: 'easeInOut' }}
-              >
-                <Box
-                  sx={{
-                    width: 200,
-                    height: 200,
-                    position: 'relative',
-                    animation: conversationState !== 'idle' ? `${rotate} 15s linear infinite` : 'none',
-                    '&::before': conversationState !== 'alerting' ? {
-                      content: '""',
-                      position: 'absolute',
-                      top: 0,
-                      left: 0,
-                      width: '100%',
-                      height: '100%',
-                      background: `radial-gradient(circle, ${theme.palette.secondary.main} 0%, ${theme.palette.primary.main} 100%)`, // Original blob
-                      opacity: 0.8,
-                      animation: `${morph} 8s ease-in-out infinite`,
-                      transition: 'transform 0.5s ease',
-                      transform: conversationState !== 'idle' ? 'scale(1.1)' : 'scale(1)',
-                    } : null,
-                  }}
-                />
-                {conversationState === 'alerting' && (
-                  <Box sx={{
-                    width: 200,
-                    height: 200,
-                    borderRadius: '50%',
-                    background: `radial-gradient(circle, ${theme.palette.error.dark} 0%, ${theme.palette.error.light} 100%)`,
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    boxShadow: `0 0 20px ${theme.palette.error.main}`,
-                  }}>
-                    <WarningAmberIcon sx={{ fontSize: 100, color: 'white' }} />
+              {conversationState === 'alerting' ? (
+                <motion.div initial={{ opacity: 0, scale: 0.5 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.5 }} transition={{ duration: 0.5, ease: 'easeInOut' }}>
+                  <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+                    <Box sx={{
+                      width: 150,
+                      height: 150,
+                      position: 'relative',
+                      borderRadius: '50%',
+                      background: `radial-gradient(circle, ${theme.palette.error.main} 0%, ${theme.palette.error.dark} 100%)`,
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      border: `3px solid ${theme.palette.error.light}`,
+                      animation: `${pulseAnimation} 2s infinite`,
+                      mb: 2,
+                    }}>
+                      <WarningAmberIcon sx={{ fontSize: 70, color: 'white' }} />
+                    </Box>
+                    <Typography variant="h6" color="text.primary" sx={{ mb: 2, maxWidth: '90%' }}>
+                      {getStatusText()}
+                    </Typography>
+                    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 4 }}>
+                      <Button variant="contained" color="success" startIcon={<CheckIcon />} onClick={handleApprove} sx={{ borderRadius: '20px', px: 3, py: 1 }}>Approve</Button>
+                      <Button variant="contained" color="error" startIcon={<CloseIcon />} onClick={handleDeny} sx={{ borderRadius: '20px', px: 3, py: 1 }}>Deny</Button>
+                    </Box>
                   </Box>
-                )}
-              </motion.div>
+                </motion.div>
+              ) : (
+                <motion.div initial={{ opacity: 0, scale: 0.5 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.5 }} transition={{ duration: 0.5, ease: 'easeInOut' }}>
+                  <Box
+                    sx={{
+                      width: 200,
+                      height: 200,
+                      position: 'relative',
+                      animation: conversationState !== 'idle' ? `${rotate} 15s linear infinite` : 'none',
+                      '&::before': {
+                        content: '""',
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        background: `radial-gradient(circle, ${theme.palette.secondary.main} 0%, ${theme.palette.primary.main} 100%)`, // Original blob
+                        opacity: 0.8,
+                        animation: `${morph} 8s ease-in-out infinite`,
+                        transition: 'transform 0.5s ease',
+                        transform: conversationState !== 'idle' ? 'scale(1.1)' : 'scale(1)',
+                      },
+                    }}
+                  />
+                </motion.div>
+              )}
             </AnimatePresence>
           </Box>
           <Box sx={{ p: 3, borderTop: `1px solid ${theme.palette.divider}`, bgcolor: 'background.paper', textAlign: 'center' }}>
-            <Typography variant="subtitle1" color="text.secondary" sx={{ mb: 2, height: '24px' }}>
-              {getStatusText()}
-            </Typography>
-            {conversationState === 'alerting' ? (
-              <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 4 }}>
-                <Button variant="contained" color="success" startIcon={<CheckIcon />} onClick={handleApprove} sx={{ borderRadius: '20px', px: 3, py: 1 }}>Approve</Button>
-                <Button variant="contained" color="error" startIcon={<CloseIcon />} onClick={handleDeny} sx={{ borderRadius: '20px', px: 3, py: 1 }}>Deny</Button>
-              </Box>
-            ) : (
+            {conversationState !== 'alerting' && (
               <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                <Typography variant="subtitle1" color="text.secondary" sx={{ position: 'absolute', bottom: 120 }}>
+                  {getStatusText()}
+                </Typography>
                 <IconButton
                   color={conversationState === 'idle' ? 'primary' : 'error'}
                   onClick={handleMicClick}
@@ -469,7 +366,15 @@ const GeminiAIAssistant: React.FC<GeminiAIAssistantProps> = ({ onTriggerAlert, p
           </Box>
           <Box sx={{ p: 2, borderTop: `1px solid ${theme.palette.divider}`, bgcolor: 'background.paper' }}>
             <Box sx={{ display: 'flex', gap: 1, mb: 1.5, overflowX: 'auto', pb: 1 }}>
-              {suggestionChips.map(chip => (<Chip key={chip} label={chip} onClick={() => setInput(chip)} variant="outlined" size="small" sx={{ borderRadius: '16px' }} />))}
+              {suggestionChips.map(chip => (
+                <Chip
+                  key={chip.text}
+                  label={chip.text}
+                  onClick={() => { setInput(chip.query); onSelectView(chip.view); }}
+                  variant="outlined"
+                  size="small"
+                  sx={{ borderRadius: '16px' }} />
+              ))}
             </Box>
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
               <TextField fullWidth variant="outlined" size="small" placeholder="Ask Gemini..." value={input} onChange={(e) => setInput(e.target.value)} onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()} sx={{ mr: 1, '& .MuiOutlinedInput-root': { borderRadius: '20px' } }} />

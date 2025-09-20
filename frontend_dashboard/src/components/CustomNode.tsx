@@ -1,13 +1,13 @@
 import React, { memo } from 'react';
 import { Handle, Position } from 'reactflow';
 import type { NodeProps } from 'reactflow';
-
-import { Paper, Box, Typography, Chip } from '@mui/material';
+import { Card, CardHeader, CardContent, Box, Typography, Chip, Avatar } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
+import SettingsIcon from '@mui/icons-material/Settings';
 import { keyframes } from '@mui/system';
 
 // Animation for the alerting node
@@ -26,85 +26,71 @@ interface CustomNodeData {
 
 const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data }) => {
   const theme = useTheme();
-
-  const getStatusColor = (status?: string) => {
+  
+  const getStatusStyling = (status?: string) => {
     switch (status) {
       case 'running':
-        return 'info';
+        return { color: 'info' as const, icon: <InfoOutlinedIcon />, avatarBg: theme.palette.info.main };
       case 'completed':
-        return 'success';
+        return { color: 'success' as const, icon: <CheckCircleOutlineIcon />, avatarBg: theme.palette.success.main };
       case 'failed':
-        return 'error';
+        return { color: 'error' as const, icon: <ErrorOutlineIcon />, avatarBg: theme.palette.error.main };
       case 'pending':
       default:
-        return 'default';
+        return { color: 'default' as const, icon: <HourglassEmptyIcon />, avatarBg: theme.palette.grey[500] };
     }
   };
 
-  const getBackgroundColor = (status?: string) => {
-    switch (status) {
-      case 'running':
-        return theme.palette.info.light; // Light blue
-      case 'completed':
-        return theme.palette.success.light; // Light green
-      case 'failed':
-        return theme.palette.error.light; // Light red
-      case 'pending':
-      default:
-        return theme.palette.background.paper;
-    }
-  };
-
-  const getStatusIcon = (status?: string) => {
-    switch (status) {
-      case 'running':
-        return <InfoOutlinedIcon sx={{ fontSize: 16 }} />;
-      case 'completed':
-        return <CheckCircleOutlineIcon sx={{ fontSize: 16 }} />;
-      case 'failed':
-        return <ErrorOutlineIcon sx={{ fontSize: 16 }} />;
-      case 'pending':
-        return <HourglassEmptyIcon sx={{ fontSize: 16 }} />;
-      default:
-        return null;
-    }
-  };
+  const { color, icon, avatarBg } = getStatusStyling(data.status);
 
   return (
-    <Paper
-      elevation={3}
+    <Card
+      elevation={4}
       sx={{
-        padding: 2,
         borderRadius: 2,
-        border: `1px solid ${theme.palette.divider}`,
-        backgroundColor: getBackgroundColor(data.status),
-        minWidth: 150,
+        border: `1px solid ${theme.palette.divider}`, 
+        minWidth: 200,
         animation: data.isAlerting ? `${pulse} 2s infinite` : 'none',
-        textAlign: 'center',
+        backgroundColor: theme.palette.background.paper,
+        transition: 'box-shadow 0.3s',
+        '&:hover': {
+          boxShadow: theme.shadows[8],
+        }
       }}
     >
-      <Handle type="target" position={Position.Top} />
-      <Box>
-        <Typography variant="subtitle1" fontWeight="bold">
-          {data.label}
-        </Typography>
+      <Handle type="target" position={Position.Left} style={{ background: theme.palette.primary.main }} />
+      <CardHeader
+        avatar={
+          <Avatar sx={{ bgcolor: avatarBg, color: 'white' }}>
+            <SettingsIcon />
+          </Avatar>
+        }
+        title={
+          <Typography variant="subtitle1" fontWeight="bold">
+            {data.label}
+          </Typography>
+        }
+        sx={{ pb: 0 }}
+      />
+      <CardContent sx={{ pt: 1, textAlign: 'center' }}>
         {data.status && (
           <Chip
-            icon={getStatusIcon(data.status)}
+            icon={icon}
             label={data.status.toUpperCase()}
-            color={getStatusColor(data.status)}
+            color={color}
             size="small"
-            sx={{ mt: 1, fontWeight: 'bold' }}
+            variant="outlined"
+            sx={{ fontWeight: 'bold' }}
           />
         )}
         {data.message && (
-          <Typography variant="caption" display="block" mt={0.5}>
+          <Typography variant="caption" display="block" mt={1} color="text.secondary">
             {data.message}
           </Typography>
         )}
-      </Box>
-      <Handle type="source" position={Position.Bottom} />
-    </Paper>
+      </CardContent>
+      <Handle type="source" position={Position.Right} style={{ background: theme.palette.primary.main }} />
+    </Card>
   );
 };
 

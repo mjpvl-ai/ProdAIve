@@ -19,7 +19,6 @@ const menuItems = [
   { text: 'Kiln Health', icon: <ThermostatIcon />, view: 'Kiln Health' },
   { text: 'Energy Cockpit', icon: <BoltIcon />, view: 'Energy Cockpit' },
   { text: 'Predictive Quality', icon: <OnlinePredictionIcon />, view: 'Predictive Quality' },
-  { text: 'Realtime Flow', icon: <AccountTreeIcon />, view: 'Realtime Flow' },
   { text: 'AI Agent Actions', icon: <SmartToyIcon />, view: 'AI Agent Actions' },
 ];
 
