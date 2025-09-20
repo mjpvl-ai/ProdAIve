@@ -1,110 +1,97 @@
 import React from 'react';
-import Drawer from '@mui/material/Drawer';
-import List from '@mui/material/List';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemText from '@mui/material/ListItemText';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import Box from '@mui/material/Box';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import Avatar from '@mui/material/Avatar';
+import { Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Divider, Box, Tooltip } from '@mui/material';
+import type { DrawerProps } from '@mui/material/Drawer';
+import {
+  Dashboard as DashboardIcon,
+  Thermostat as ThermostatIcon,
+  Bolt as BoltIcon,
+  OnlinePrediction as OnlinePredictionIcon,
+  AccountTree as AccountTreeIcon,
+  SmartToy as SmartToyIcon,
+  Settings as SettingsIcon,
+} from '@mui/icons-material';
 
-// --- Icon Imports ---
-import DashboardOutlinedIcon from '@mui/icons-material/DashboardOutlined';
-import ElectricBoltOutlinedIcon from '@mui/icons-material/ElectricBoltOutlined';
-import LocalFireDepartmentOutlinedIcon from '@mui/icons-material/LocalFireDepartmentOutlined';
-import TrendingUpOutlinedIcon from '@mui/icons-material/TrendingUpOutlined';
-import SmartToyOutlinedIcon from '@mui/icons-material/SmartToyOutlined';
-import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
-import TimelineOutlinedIcon from '@mui/icons-material/TimelineOutlined'; // Import the new icon
-import { SvgIcon } from '@mui/material';
+const DRAWER_WIDTH = 240;
+const COLLAPSED_DRAWER_WIDTH = 60;
 
-const drawerWidth = 260; // Increased width for a more spacious feel
-
-// A simple, elegant SVG logo for ProdAIve
-const ProdAiveLogo = () => (
-  <SvgIcon sx={{ fontSize: 32, color: '#FFFFFF' }}>
-    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5-10-5-10 5z" />
-  </SvgIcon>
-);
+const menuItems = [
+  { text: 'Overview', icon: <DashboardIcon />, view: 'Overview' },
+  { text: 'Kiln Health', icon: <ThermostatIcon />, view: 'Kiln Health' },
+  { text: 'Energy Cockpit', icon: <BoltIcon />, view: 'Energy Cockpit' },
+  { text: 'Predictive Quality', icon: <OnlinePredictionIcon />, view: 'Predictive Quality' },
+  { text: 'Realtime Flow', icon: <AccountTreeIcon />, view: 'Realtime Flow' },
+  { text: 'AI Agent Actions', icon: <SmartToyIcon />, view: 'AI Agent Actions' },
+];
 
 interface SidebarProps {
   open: boolean;
+  variant?: DrawerProps['variant'];
   currentView: string;
   onSelectView: (view: string) => void;
+  onClose: () => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ open, currentView, onSelectView }) => {
-  const navItems = [
-    { text: 'Overview', icon: <DashboardOutlinedIcon /> },
-    { text: 'Energy Cockpit', icon: <ElectricBoltOutlinedIcon /> },
-    { text: 'Kiln Health', icon: <LocalFireDepartmentOutlinedIcon /> },
-    { text: 'Predictive Quality', icon: <TrendingUpOutlinedIcon /> },
-    { text: 'Realtime Flow', icon: <TimelineOutlinedIcon /> }, // New item for Realtime Flow
-    { text: 'AI Assistant', icon: <SmartToyOutlinedIcon /> },
-    { text: 'Settings', icon: <SettingsOutlinedIcon /> },
-  ];
-
+const Sidebar: React.FC<SidebarProps> = ({ open, variant, currentView, onSelectView, onClose }) => {
   return (
     <Drawer
-      variant="persistent"
+      variant={variant}
       open={open}
+      onClose={onClose}
       sx={{
-        width: open ? drawerWidth : 0,
+        width: open ? DRAWER_WIDTH : COLLAPSED_DRAWER_WIDTH,
         flexShrink: 0,
         '& .MuiDrawer-paper': {
-          width: drawerWidth,
+          width: open ? DRAWER_WIDTH : COLLAPSED_DRAWER_WIDTH,
           boxSizing: 'border-box',
-          borderRight: 'none', // Remove the default border
-          backgroundColor: '#000031', // Darker blue for more contrast
-          color: '#FFFFFF',
+          overflowX: 'hidden',
+          borderRight: 'none',
+          transition: (theme) => theme.transitions.create('width', {
+            easing: theme.transitions.easing.sharp,
+            duration: theme.transitions.duration.enteringScreen,
+          }),
         },
       }}
     >
-      <Toolbar sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', p: 2 }}>
-        <ProdAiveLogo />
-        <Typography variant="h5" noWrap component="div" sx={{ ml: 2, fontWeight: 700 }}>
-          ProdAIve
-        </Typography>
-      </Toolbar>
-      <Box sx={{ overflow: 'auto', p: 1 }}>
-        <List>
-          {navItems.map((item) => (
-            <ListItemButton
-              key={item.text}
-              selected={item.text === currentView}
-              onClick={() => onSelectView(item.text)}
+      <Box sx={{ height: '64px' }} /> {/* Spacer for the header */}
+      <Divider />
+      <List>
+        {menuItems.map((item) => (
+          <ListItem key={item.text} disablePadding>
+            <Tooltip title={!open ? item.text : ''} placement="right">
+              <ListItemButton
+                selected={currentView === item.view}
+                onClick={() => onSelectView(item.view)}
+                sx={{ justifyContent: open ? 'initial' : 'center' }}
+              >
+                <ListItemIcon sx={{ minWidth: 0, mr: open ? 3 : 'auto', justifyContent: 'center' }}>
+                  {item.icon}
+                </ListItemIcon>
+                <ListItemText 
+                  primary={item.text} 
+                  sx={{ 
+                    opacity: open ? 1 : 0,
+                    transition: (theme) => theme.transitions.create('opacity', { duration: theme.transitions.duration.enteringScreen }),
+                  }} />
+              </ListItemButton>
+            </Tooltip>
+          </ListItem>
+        ))}
+      </List>
+      <Divider />
+      <List>
+        <ListItem disablePadding>
+          <ListItemButton onClick={() => onSelectView('Settings')} sx={{ justifyContent: open ? 'initial' : 'center' }}>
+            <ListItemIcon sx={{ minWidth: 0, mr: open ? 3 : 'auto', justifyContent: 'center' }}><SettingsIcon /></ListItemIcon>
+            <ListItemText 
+              primary="Settings" 
               sx={{ 
-                m: 1,
-                borderRadius: 2,
-                '&.Mui-selected': {
-                  backgroundColor: 'rgba(0, 172, 193, 0.2)',
-                  borderLeft: `3px solid ${ '#00acc1'}`,
-                  '&:hover': {
-                    backgroundColor: 'rgba(0, 172, 193, 0.3)',
-                  },
-                },
-                '&:hover': {
-                  backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                },
-              }}
-            >
-              <ListItemIcon sx={{ color: 'inherit' }}>{item.icon}</ListItemIcon>
-              <ListItemText primary={item.text} primaryTypographyProps={{ fontWeight: 500 }} />
-            </ListItemButton>
-          ))}
-        </List>
-      </Box>
-      {/* Refined User Profile Section */}
-      <Box sx={{ mt: 'auto', p: 2, borderTop: '1px solid rgba(255, 255, 255, 0.1)' }}>
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <Avatar alt="John Doe" src="/static/images/avatar/1.jpg" sx={{ width: 40, height: 40 }} />
-          <Box sx={{ ml: 2 }}>
-            <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>John Doe</Typography>
-            <Typography variant="body2" sx={{ color: '#B0B0B0' }}>Administrator</Typography>
-          </Box>
-        </Box>
-      </Box>
+                opacity: open ? 1 : 0,
+                transition: (theme) => theme.transitions.create('opacity', { duration: theme.transitions.duration.enteringScreen }),
+              }} 
+            />
+          </ListItemButton>
+        </ListItem>
+      </List>
     </Drawer>
   );
 };

@@ -102,7 +102,7 @@ const AlertCard: React.FC<{ alert: typeof recentAlerts[0] }> = ({ alert }) => {
 
 
 const ChartCard: React.FC<any> = ({ title, children }) => (
-  <Grid xs={12} md={6} component="div">
+  <Grid xs={12} md={12} component="div">
     <Paper elevation={2} sx={{ p: 3, borderRadius: 2, height: '100%', display: 'flex', flexDirection: 'column', minHeight: 350 }}>
       <Typography variant="h6" gutterBottom sx={{ fontWeight: 600 }}>{title}</Typography>
       <Box sx={{ flex: 1, mt: 2 }}>
@@ -125,7 +125,7 @@ const KilnHealthOverview: React.FC = () => {
   const data = mockKilnData[timeRange as keyof typeof mockKilnData];
 
   return (
-    <Box>
+    <Box sx={{ py: 3 }}>
       <Grid container spacing={3}>
         {/* Header */}
         <Grid xs={12} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }} component="div">

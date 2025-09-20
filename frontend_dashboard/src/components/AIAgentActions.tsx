@@ -29,7 +29,7 @@ const AIAgentActions: React.FC = () => {
   };
 
   return (
-    <Box sx={{ p: 3 }}>
+    <Box sx={{ py: 3, px: 0.75 }}>
       <Typography variant="h4" gutterBottom sx={{ fontWeight: 700, mb: 3 }}>AI Agent Actions & Recommendations</Typography>
 
       <Grid container spacing={4}>

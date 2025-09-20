@@ -1,13 +1,27 @@
 import React, { memo } from 'react';
-import { Handle, Position } from 'reactflow'; // Changed from react-flow-renderer
+import { Handle, Position } from 'reactflow';
+import type { NodeProps } from 'reactflow';
 
 import { Paper, Box, Typography, Chip } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
+import { keyframes } from '@mui/system';
+
+// Animation for the alerting node
+const pulse = keyframes`
+  0% { box-shadow: 0 0 0 0 rgba(255, 82, 82, 0.7); }
+  70% { box-shadow: 0 0 0 15px rgba(255, 82, 82, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(255, 82, 82, 0); }
+`;
 
 interface CustomNodeData {
   label: string;
   status?: string; // e.g., 'pending', 'running', 'completed', 'failed'
   message?: string;
+  isAlerting?: boolean;
 }
 
 const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data }) => {
@@ -41,6 +55,21 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data }) => {
     }
   };
 
+  const getStatusIcon = (status?: string) => {
+    switch (status) {
+      case 'running':
+        return <InfoOutlinedIcon sx={{ fontSize: 16 }} />;
+      case 'completed':
+        return <CheckCircleOutlineIcon sx={{ fontSize: 16 }} />;
+      case 'failed':
+        return <ErrorOutlineIcon sx={{ fontSize: 16 }} />;
+      case 'pending':
+        return <HourglassEmptyIcon sx={{ fontSize: 16 }} />;
+      default:
+        return null;
+    }
+  };
+
   return (
     <Paper
       elevation={3}
@@ -50,6 +79,7 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data }) => {
         border: `1px solid ${theme.palette.divider}`,
         backgroundColor: getBackgroundColor(data.status),
         minWidth: 150,
+        animation: data.isAlerting ? `${pulse} 2s infinite` : 'none',
         textAlign: 'center',
       }}
     >
@@ -60,6 +90,7 @@ const CustomNode: React.FC<NodeProps<CustomNodeData>> = ({ data }) => {
         </Typography>
         {data.status && (
           <Chip
+            icon={getStatusIcon(data.status)}
             label={data.status.toUpperCase()}
             color={getStatusColor(data.status)}
             size="small"

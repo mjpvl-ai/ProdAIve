@@ -63,12 +63,13 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 interface HeaderBarProps {
   onSidebarToggle: () => void;
   onAIAssistantToggle: () => void;
+  onAIAssistantFullscreenToggle: () => void; // This is illustrative; not used directly here but good practice
   sidebarOpen: boolean;
   aiAssistantOpen: boolean;
   currentView: string;
 }
 
-const HeaderBar: React.FC<HeaderBarProps> = ({ onSidebarToggle, onAIAssistantToggle, sidebarOpen, aiAssistantOpen, currentView }) => {
+const HeaderBar: React.FC<HeaderBarProps> = ({ onSidebarToggle, onAIAssistantToggle, sidebarOpen, aiAssistantOpen, currentView, onAIAssistantFullscreenToggle }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [notificationsAnchorEl, setNotificationsAnchorEl] = useState<null | HTMLElement>(null);
   const [profileAnchorEl, setProfileAnchorEl] = useState<null | HTMLElement>(null);
@@ -107,12 +108,20 @@ const HeaderBar: React.FC<HeaderBarProps> = ({ onSidebarToggle, onAIAssistantTog
           {sidebarOpen ? <ChevronLeftIcon /> : <MenuIcon />}
         </IconButton>
         <Typography
+          variant="h5" // Slightly larger for prominence
+          noWrap
+          component="div"
+          sx={{ fontWeight: 700, color: 'primary.main', mr: 1 }} // Use primary color and bold
+        >
+          ProdAIve
+        </Typography>
+        <Typography
           variant="h6"
           noWrap
           component="div"
-          sx={{ flexGrow: 1, fontWeight: 600 }}
+          sx={{ flexGrow: 1, fontWeight: 600, color: 'text.secondary' }} // Subtler color for current view
         >
-          {currentView}
+          | {currentView}
         </Typography>
 
         <Search>
@@ -141,7 +150,7 @@ const HeaderBar: React.FC<HeaderBarProps> = ({ onSidebarToggle, onAIAssistantTog
 
         <IconButton
           color={aiAssistantOpen ? 'secondary' : 'inherit'}
-          aria-label="toggle AI assistant"
+          aria-label="toggle conversational assistant"
           onClick={onAIAssistantToggle}
           sx={{ mr: 1 }}
         >

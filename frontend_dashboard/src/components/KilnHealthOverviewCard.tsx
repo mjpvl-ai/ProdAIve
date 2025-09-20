@@ -50,7 +50,16 @@ const KilnHealthOverviewCard: React.FC<KilnHealthOverviewCardProps> = ({ isExpan
               </ResponsiveContainer>
             </Box>
             <LinearProgress variant="determinate" value={85} sx={{ mt: 1, height: 8, borderRadius: 4 }} />
-            <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5, display: 'block' }}>Overall Health Score: 85%</Typography>
+            <Box sx={{ display: 'flex', alignItems: 'center', mt: 0.5 }}>
+              <Box sx={{
+                width: 10,
+                height: 10,
+                borderRadius: '50%',
+                bgcolor: 85 >= 90 ? theme.palette.success.main : (85 >= 70 ? theme.palette.warning.main : theme.palette.error.main),
+                mr: 1,
+              }} />
+              <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>Overall Health Score: 85%</Typography>
+            </Box>
           </Box>
         ) : (
           <Box sx={{ mt: 2 }}>

@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import { Box, Typography, Grid, FormControl, InputLabel, Select, MenuItem, Paper } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ScatterChart, Scatter } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ScatterChart, Scatter, ReferenceArea } from 'recharts';
 import { motion } from 'framer-motion';
 
 // --- Mock Data ---
 const predictedFCAO = 2.15;
 const confidenceInterval = '± 0.05';
 const targetFCAORange = '2.0 - 2.3';
+const targetFCAOMin = 2.0;
+const targetFCAOMax = 2.3;
 
 const fcaoData = {
   '24hours': [
@@ -78,14 +80,24 @@ const PredictiveQualityDashboard: React.FC = () => {
     setTimeRange(event.target.value as string);
   };
 
+  // Calculate KPIs based on current time range data
+  const currentFCAOData = fcaoData[timeRange as keyof typeof fcaoData];
+  const averageFCAO = (currentFCAOData.reduce((sum, entry) => sum + entry.fcao, 0) / currentFCAOData.length).toFixed(2);
+  const inTargetRangeCount = currentFCAOData.filter(entry => entry.fcao >= targetFCAOMin && entry.fcao <= targetFCAOMax).length;
+  const inTargetRangePercentage = ((inTargetRangeCount / currentFCAOData.length) * 100).toFixed(1);
+
   return (
-    <motion.div initial="hidden" animate="visible" transition={{ staggerChildren: 0.1 }}>
+    <motion.div
+      initial="hidden"
+      animate="visible"
+      transition={{ staggerChildren: 0.1 }}
+    >
       <Grid container spacing={3}>
-        <Grid xs={12} component="div">
+        <Grid item xs={12}>
           <Typography variant="h4" gutterBottom sx={{ fontWeight: 700 }}>Predictive Quality Dashboard</Typography>
         </Grid>
 
-        <Grid xs={12} md={4} component="div">
+        <Grid item xs={12} md={4}>
           <Paper component={motion.div} variants={cardVariants} sx={{ height: '100%', p: 3, borderRadius: 2, boxShadow: 3, textAlign: 'center' }}>
             <Typography variant="h6" color="text.secondary" gutterBottom>Real-time f-CaO Prediction</Typography>
             <Typography variant="h2" color="primary" sx={{ mt: 1, fontWeight: 700 }}>
@@ -103,7 +115,37 @@ const PredictiveQualityDashboard: React.FC = () => {
           </Paper>
         </Grid>
 
-        <Grid xs={12} md={8} component="div">
+        <Grid item xs={12} md={4}>
+          <Paper component={motion.div} variants={cardVariants} sx={{ height: '100%', p: 3, borderRadius: 2, boxShadow: 3, textAlign: 'center' }}>
+            <Typography variant="h6" color="text.secondary" gutterBottom>Average f-CaO ({timeRange === '24hours' ? '24H' : timeRange === '7days' ? '7D' : '30D'})</Typography>
+            <Typography variant="h2" color="secondary" sx={{ mt: 1, fontWeight: 700 }}>
+              {averageFCAO}
+              <Typography variant="h4" component="span" sx={{ ml: 0.5, color: 'text.secondary' }}>
+                %
+              </Typography>
+            </Typography>
+            <Typography variant="body1" color="text.secondary" sx={{ mt: 1 }}>
+              Target: {targetFCAORange}
+            </Typography>
+          </Paper>
+        </Grid>
+
+        <Grid item xs={12} md={4}>
+          <Paper component={motion.div} variants={cardVariants} sx={{ height: '100%', p: 3, borderRadius: 2, boxShadow: 3, textAlign: 'center' }}>
+            <Typography variant="h6" color="text.secondary" gutterBottom>% In Target Range</Typography>
+            <Typography variant="h2" color="success.main" sx={{ mt: 1, fontWeight: 700 }}>
+              {inTargetRangePercentage}
+              <Typography variant="h4" component="span" sx={{ ml: 0.5, color: 'text.secondary' }}>
+                %
+              </Typography>
+            </Typography>
+            <Typography variant="body1" color="text.secondary" sx={{ mt: 1 }}>
+              ({inTargetRangeCount} of {currentFCAOData.length} data points)
+            </Typography>
+          </Paper>
+        </Grid>
+
+        <Grid item xs={12} md={8}>
           <Paper component={motion.div} variants={cardVariants} sx={{ height: '100%', p: 3, borderRadius: 2, boxShadow: 3, display: 'flex', flexDirection: 'column', minHeight: 350 }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
               <Typography variant="h6" sx={{ fontWeight: 600 }}>Historical f-CaO Trends</Typography>
@@ -117,15 +159,19 @@ const PredictiveQualityDashboard: React.FC = () => {
               </FormControl>
             </Box>
             <Box id="fcao-chart-container" sx={{ flex: 1, height: '300px' }}>
-              {console.log('FCAO Data for chart:', fcaoData[timeRange as keyof typeof fcaoData])}
-              {console.log('Parent Box height (FCAO):', document.getElementById('fcao-chart-container')?.clientHeight)}
+              
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={fcaoData[timeRange as keyof typeof fcaoData]}>
                   <CartesianGrid strokeDasharray="3 3" strokeOpacity={0.2} />
                   <XAxis dataKey="name" stroke={theme.palette.text.secondary} />
                   <YAxis stroke={theme.palette.text.secondary} />
-                  <Tooltip contentStyle={{ backgroundColor: 'rgba(255, 255, 255, 0.9)', borderColor: theme.palette.divider, borderRadius: theme.shape.borderRadius, boxShadow: theme.shadows[3] }} />
+                  <Tooltip 
+                    contentStyle={{ backgroundColor: 'rgba(255, 255, 255, 0.9)', borderColor: theme.palette.divider, borderRadius: theme.shape.borderRadius, boxShadow: theme.shadows[3] }}
+                    formatter={(value: number) => [`${value.toFixed(2)}%`, 'f-CaO']}
+                    labelFormatter={(label: string) => `Time: ${label}`}
+                  />
                   <Legend />
+                  <ReferenceArea y1={targetFCAOMin} y2={targetFCAOMax} strokeOpacity={0.3} fill={theme.palette.success.light} />
                   <Line type="monotone" dataKey="fcao" name="f-CaO" stroke={theme.palette.primary.main} strokeWidth={2} activeDot={{ r: 8 }} />
                 </LineChart>
               </ResponsiveContainer>
@@ -133,15 +179,14 @@ const PredictiveQualityDashboard: React.FC = () => {
           </Paper>
         </Grid>
 
-        <Grid xs={12} component="div">
+        <Grid item xs={12}>
           <Paper component={motion.div} variants={cardVariants} sx={{ p: 3, borderRadius: 2, boxShadow: 3, display: 'flex', flexDirection: 'column', minHeight: 350 }}>
                         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
               <Typography variant="h6" sx={{ fontWeight: 600 }}>Correlation Analysis: Kiln Temperature vs. f-CaO</Typography>
             </Box>
             <Box id="correlation-chart-container" sx={{ flex: 1, height: '300px' }}>
               <ResponsiveContainer width="100%" height="100%">
-                {console.log('CorrelationData for chart:', correlationData[timeRange as keyof typeof correlationData])}
-                {console.log('Parent Box height (Correlation):', document.getElementById('correlation-chart-container')?.clientHeight)}
+                
                 <ScatterChart>
                   <CartesianGrid strokeDasharray="3 3" strokeOpacity={0.2} />
                   <XAxis type="number" dataKey="temp" name="Kiln Temperature" unit="°C" stroke={theme.palette.text.secondary} />
