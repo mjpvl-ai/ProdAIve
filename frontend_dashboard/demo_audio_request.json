@@ -1,0 +1,16 @@
+{
+  "model": "gemini-2.5-pro-preview-tts",
+  "input": {
+    "text": "Hello everyone. Today, I'm presenting the ProdAIve Dashboard. It's an intelligent platform built with React, TypeScript, and Material-UI to provide a modern, responsive, and data-rich experience for optimizing industrial processes. The live version is already deployed and accessible. What you see is the main Overview, giving a high-level summary of plant-wide KPIs. But the real power of ProdAIve is its proactive nature. The system is always monitoring for anomalies... and it looks like it's just found one. As you can see, two things just happened automatically. First, our Gemini AI Assistant has opened with a critical alert: 'High temperature spike detected in Kiln!' It has also instantly provided a link to the Standard Operating Procedure (SOP) for handling this exact issue. Second, the main view has pivoted to the Process Flow diagram, and the specific node where the issue occurred—the 'Kiln Burning' stage—is now highlighted. This guided workflow takes the guesswork out of troubleshooting. The AI doesn't just tell you what's wrong; it shows you where it's happening and tells you how to respond. The AI Assistant is more than an alert system; it's an interactive partner that can navigate the app for you. Let's ask it to show us the relevant dashboards. First, let's get more details on the kiln's health. The assistant has switched us to the Kiln Health view, where we can see detailed real-time operational data for all our kilns. Now, let's check the energy impact. Here in the Energy Cockpit, we can track consumption against our targets. Finally, how might this affect our product? And here, the AI brings us to the Predictive Quality dashboard, where we use forecasting models to see the potential impact on final product quality. Notice the smooth, animated transitions between each view, all orchestrated by the AI to create a fluid analytical story. The panel itself is flexible. We can toggle it fullscreen for an immersive chat experience... or hide it completely to focus on the data. In summary, the ProdAIve dashboard combines: Real-time, multi-faceted monitoring. A highly interactive and intuitive user interface. And powerful, proactive AI-driven insights that guide users from problem detection to resolution. The core frontend structure is complete, and our next step is to integrate with live backend services to power this dashboard with real-time production data. Thank you."
+  },
+  "voice": {
+    "speaker": "Callirhoe"
+  },
+  "context": {
+    "prompt": "You are a software engineer presenting a product demo to stakeholders. Speak clearly, confidently, and at a moderate pace. Your tone should be professional but engaging."
+  },
+  "audioConfig": {
+    "audioEncoding": "MP3",
+    "sampleRateHertz": 24000
+  }
+}
