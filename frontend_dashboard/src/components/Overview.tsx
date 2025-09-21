@@ -95,7 +95,7 @@ export const Overview: React.FC<{
       </Grid>
 
       {/* Predictive Quality Card */}
-      <Grid item xs={12} md={6} lg={4}>
+      <Grid item xs={12} md={6} lg={4} component="div">
         <Card sx={{ height: '100%' }}>
           <CardHeader
             avatar={<Avatar sx={{ bgcolor: '#2e7d32' }}><HighQualityIcon /></Avatar>}
@@ -123,7 +123,7 @@ export const Overview: React.FC<{
       </Grid>
 
       {/* Realtime Flow Card */}
-      <Grid item xs={12}>
+      <Grid item xs={12} component="div">
         <FlowDisplayCard
           onViewDetails={() => onChartClick(<FlowDisplay alertingNodeId={alertingNodeId} />, 'Realtime Process Flow')}
           alertingNodeId={alertingNodeId}

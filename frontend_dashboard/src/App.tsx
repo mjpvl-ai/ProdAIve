@@ -1,11 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Dialog, DialogContent, IconButton, Toolbar, AppBar, useTheme, useMediaQuery, } from '@mui/material';
+import { Box, Dialog, DialogContent, IconButton, Toolbar, AppBar, useTheme, } from '@mui/material';
 import {
-  CheckCircleOutline as CheckCircleOutlineIcon,
-  WarningAmber as WarningAmberIcon,
-  ErrorOutline as ErrorOutlineIcon,
-  Whatshot as WhatshotIcon,
-  HighQuality as HighQualityIcon,
   Close as CloseIcon,
   Dashboard as DashboardIcon,
   Thermostat as ThermostatIcon,
@@ -33,6 +28,13 @@ interface Alert {
   message: string;
 }
 
+export interface Position {
+  width: number;
+  height: number;
+  top: number;
+  left: number;
+}
+
 // Mock data for the overview chart
 
 const menuItems = [
@@ -55,8 +57,15 @@ const Main = styled('main')(({ theme }) => ({
 
 const App: React.FC = () => {
   const [aiAssistantOpen, setAIAssistantOpen] = useState(false);
-  const [assistantPosition, setAssistantPosition] = useState({
-    width: AI_ASSISTANT_WIDTH, // Keep width for resizing logic if any
+  const [assistantPosition, setAssistantPosition] = useState<Position>(() => {
+    const initialHeight = window.innerHeight - 64; // Assuming header height is 64px
+    const initialLeft = window.innerWidth - AI_ASSISTANT_WIDTH; // Docked to right
+    return {
+      width: AI_ASSISTANT_WIDTH,
+      height: initialHeight,
+      top: 64,
+      left: initialLeft,
+    };
   });
 
   const [aiAssistantFullScreen, setAIAssistantFullScreen] = useState(false);
@@ -66,7 +75,7 @@ const App: React.FC = () => {
   const [activeAlert, setActiveAlert] = useState<Alert | null>(null);
 
   const theme = useTheme();
-  const isLgUp = useMediaQuery(theme.breakpoints.up('lg')); // 'lg' is 1200px by default
+  
 
   const handleAIAssistantToggle = () => setAIAssistantOpen(!aiAssistantOpen);
 

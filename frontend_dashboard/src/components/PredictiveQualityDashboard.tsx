@@ -126,7 +126,6 @@ const ChartCard: React.FC<any> = ({ title, children, onClick, headerContent }) =
 );
 
 const PredictiveQualityDashboard: React.FC<PredictiveQualityDashboardProps> = ({ onChartClick }) => {
-  const theme = useTheme();
   const [timeRange, setTimeRange] = useState('7days');
 
   const handleTimeRangeChange = (event: any) => {
@@ -146,7 +145,7 @@ const PredictiveQualityDashboard: React.FC<PredictiveQualityDashboardProps> = ({
       transition={{ staggerChildren: 0.1 }}
     >
       <Grid container spacing={3}>
-        <Grid item xs={12}>
+        <Grid item xs={12} component="div">
           <Typography variant="h4" gutterBottom sx={{ fontWeight: 700 }}>Predictive Quality Dashboard</Typography>
         </Grid>
 
@@ -198,7 +197,7 @@ const PredictiveQualityDashboard: React.FC<PredictiveQualityDashboardProps> = ({
           </Paper>
         </Grid>
 
-        <Grid item xs={12} md={8}>
+        <Grid item xs={12} md={8} component="div">
           <ChartCard
             title="Historical f-CaO Trends"
             onClick={onChartClick ? () => onChartClick(<FcaoTrendChart data={fcaoData[timeRange as keyof typeof fcaoData]} />, 'Historical f-CaO Trends') : undefined}

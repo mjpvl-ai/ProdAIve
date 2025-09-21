@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Box, Typography, Paper, FormControlLabel, Switch, RadioGroup, Radio, FormControl, FormLabel, TextField, Button } from '@mui/material';
-import { useTheme } from '@mui/material/styles';
 import { motion } from 'framer-motion';
 
 const cardVariants = {
@@ -9,7 +8,7 @@ const cardVariants = {
 };
 
 const Settings: React.FC = () => {
-  const theme = useTheme();
+  
   const [darkMode, setDarkMode] = useState(false); // This would ideally come from a global state/context
   const [language, setLanguage] = useState('en');
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);

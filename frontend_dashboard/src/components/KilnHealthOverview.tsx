@@ -63,7 +63,7 @@ const StatusChip: React.FC<{ status: string }> = ({ status }) => {
 };
 
 const ParameterCard: React.FC<{ title: string; value: number; unit: string; icon: React.ReactNode }> = ({ title, value, unit, icon }) => (
-  <Grid item xs={12} sm={6} md={4}>
+  <Grid item xs={12} sm={6} md={4} component="div">
     <Paper elevation={2} sx={{ height: '100%', p: 2, borderRadius: 2, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
         <Typography variant="subtitle1" color="text.secondary">{title}</Typography>
@@ -86,7 +86,7 @@ const AlertCard: React.FC<{ alert: typeof recentAlerts[0] }> = ({ alert }) => {
   const config = alertConfig[alert.type as keyof typeof alertConfig];
 
   return (
-    <Grid item xs={12}>
+    <Grid item xs={12} component="div">
       <Paper elevation={2} sx={{ display: 'flex', alignItems: 'center', p: 2, borderRadius: 2, borderLeft: `4px solid ${config.color}` }}>
         <Box sx={{ mr: 2, color: config.color }}>{config.icon}</Box>
         <Box>
@@ -142,7 +142,7 @@ const PressureOxygenChart: React.FC<{ data: any[] }> = ({ data }) => {
 };
 
 const ChartCard: React.FC<any> = ({ title, children, onClick }) => (
-  <Grid item xs={12}>
+  <Grid item xs={12} component="div">
     <Paper elevation={2} sx={{ p: 3, borderRadius: 2, height: '100%', display: 'flex', flexDirection: 'column', minHeight: 350 }}>
       <Typography variant="h6" gutterBottom sx={{ fontWeight: 600 }}>{title}</Typography>
       <Box sx={{ flex: 1, mt: 2, cursor: onClick ? 'pointer' : 'default' }} onClick={onClick}>
@@ -154,7 +154,6 @@ const ChartCard: React.FC<any> = ({ title, children, onClick }) => (
 
 // --- Main Component ---
 const KilnHealthOverview: React.FC<{ onChartClick?: (element: React.ReactNode, title: string) => void }> = ({ onChartClick }) => {
-  const theme = useTheme();
   const [timeRange, setTimeRange] = useState('8hours');
 
   const handleTimeRangeChange = (event: any) => {
@@ -176,7 +175,7 @@ const KilnHealthOverview: React.FC<{ onChartClick?: (element: React.ReactNode, t
         </Grid>
 
         {/* Key Operational Parameters */}
-        <Grid item xs={12} component="div">
+        <Grid item xs={12}>
           <Typography variant="h5" sx={{ fontWeight: 600, mb: 2 }}>Key Operational Parameters</Typography>
           <Grid container spacing={2}>
             <ParameterCard title="Kiln Speed" value={operationalParameters.kilnSpeed.value} unit={operationalParameters.kilnSpeed.unit} icon={operationalParameters.kilnSpeed.icon} />
@@ -189,7 +188,7 @@ const KilnHealthOverview: React.FC<{ onChartClick?: (element: React.ReactNode, t
         </Grid>
 
         {/* Trends Section Header */}
-        <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 2 }} component="div">
+        <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 2 }}>
           <Typography variant="h5" sx={{ fontWeight: 600 }}>Kiln Trends</Typography>
           <FormControl sx={{ minWidth: 150 }} size="small">
             <InputLabel>Time Range</InputLabel>
@@ -202,7 +201,7 @@ const KilnHealthOverview: React.FC<{ onChartClick?: (element: React.ReactNode, t
         </Grid>
 
         {/* Trend Charts */}
-        <Grid item xs={12} component="div">
+        <Grid item xs={12}>
           <Grid container spacing={3}>
             <ChartCard
               title="Temperature Trend"

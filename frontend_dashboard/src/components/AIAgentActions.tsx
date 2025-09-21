@@ -1,10 +1,8 @@
 import React from 'react';
 import { Box, Typography, Paper, List, ListItem, ListItemText, Chip, Grid, IconButton, Divider } from '@mui/material';
 import { CheckCircleOutline, History, LightbulbOutlined, Check, Close } from '@mui/icons-material';
-import { useTheme } from '@mui/material/styles';
 
 const AIAgentActions: React.FC = () => {
-  const theme = useTheme();
 
   // Mock Data for AI Agent Actions and Recommendations
   const actionLog = [
@@ -33,7 +31,7 @@ const AIAgentActions: React.FC = () => {
       <Typography variant="h4" gutterBottom sx={{ fontWeight: 700, mb: 3 }}>AI Agent Actions & Recommendations</Typography>
 
       <Grid container spacing={4}>
-        <Grid item xs={12} lg={6}>
+        <Grid item xs={12} lg={6} component="div">
           <Paper elevation={2} sx={{ p: 3, borderRadius: 2 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
               <History sx={{ mr: 1.5, color: 'primary.main' }} />
@@ -62,7 +60,7 @@ const AIAgentActions: React.FC = () => {
           </Paper>
         </Grid>
 
-        <Grid item xs={12} lg={6}>
+        <Grid item xs={12} lg={6} component="div">
           <Paper elevation={2} sx={{ p: 3, borderRadius: 2 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
               <LightbulbOutlined sx={{ mr: 1.5, color: 'secondary.main' }} />

@@ -1,69 +1,28 @@
-# React + TypeScript + Vite
+# ProdAIve Frontend Dashboard
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is the frontend dashboard for the ProdAIve project, a modern, data-driven interface for monitoring industrial processes. It is built with React, TypeScript, Vite, and Material-UI.
 
-Currently, two official plugins are available:
+## Live Deployment
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+The application is deployed on Firebase Hosting and is accessible at the following URL:
 
-## Expanding the ESLint configuration
+**Hosting URL:** [https://prodaive-3902a.web.app](https://prodaive-3902a.web.app)
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Key Features
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+- **Real-time Monitoring:** Dashboards for Kiln Health, Energy Consumption, and Predictive Quality.
+- **AI Assistant:** An integrated Gemini AI assistant for insights and actions.
+- **Interactive Visualizations:** Process flow diagrams and detailed charts.
+- **Responsive Design:** Fully functional on a range of screen sizes.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## Available Scripts
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+In the project directory, you can run:
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### `npm run dev`
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Runs the app in development mode. Open http://localhost:5173 to view it in the browser.
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+### `npm run build`
+
+Builds the app for production to the `dist` folder.

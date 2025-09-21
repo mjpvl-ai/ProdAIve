@@ -6,7 +6,6 @@ import {
   Thermostat as ThermostatIcon,
   Bolt as BoltIcon,
   OnlinePrediction as OnlinePredictionIcon,
-  AccountTree as AccountTreeIcon,
   SmartToy as SmartToyIcon,
   Settings as SettingsIcon,
 } from '@mui/icons-material';

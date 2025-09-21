@@ -1,4 +1,4 @@
-import React, { useState, useEffect, ReactNode } from 'react';
+import React, { useState, useEffect, type ReactNode } from 'react';
 import { Box, Typography, FormControl, InputLabel, Select, MenuItem, CircularProgress, Alert, Paper } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, AreaChart, Area } from 'recharts';
@@ -106,31 +106,27 @@ const EnergyCockpit: React.FC<EnergyCockpitProps> = ({ onChartClick }) => {
 
   const EnergyTrendChart = () => (
     <ResponsiveContainer width="100%" height="100%">
-      {loading && <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}><CircularProgress /></Box>}
-      {error && <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}><Alert severity="error">{error}</Alert></Box>}
-      {!loading && !error && energyData && (
-        <AreaChart data={energyData[timeRange as keyof typeof energyData]} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
-          <defs>
-            <linearGradient id="energyGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor={theme.palette.primary.main} stopOpacity={0.7}/>
-              <stop offset="95%" stopColor={theme.palette.primary.main} stopOpacity={0}/>
-            </linearGradient>
-          </defs>
-          <CartesianGrid strokeDasharray="3 3" strokeOpacity={0.2} />
-          <XAxis dataKey="name" stroke={theme.palette.text.secondary} />
-          <YAxis stroke={theme.palette.text.secondary} />
-          <Tooltip
-            contentStyle={{
-              backgroundColor: 'rgba(255, 255, 255, 0.9)',
-              borderColor: theme.palette.divider,
-              borderRadius: theme.shape.borderRadius,
-              boxShadow: theme.shadows[3],
-            }}
-          />
-          <Legend />
-          <Area type="monotone" dataKey="consumption" name="Consumption" stroke={theme.palette.primary.dark} strokeWidth={2} fill="url(#energyGradient)" />
-        </AreaChart>
-      )}
+      <AreaChart data={energyData?.[timeRange as keyof typeof energyData]} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+        <defs>
+          <linearGradient id="energyGradient" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="5%" stopColor={theme.palette.primary.main} stopOpacity={0.7}/>
+            <stop offset="95%" stopColor={theme.palette.primary.main} stopOpacity={0}/>
+          </linearGradient>
+        </defs>
+        <CartesianGrid strokeDasharray="3 3" strokeOpacity={0.2} />
+        <XAxis dataKey="name" stroke={theme.palette.text.secondary} />
+        <YAxis stroke={theme.palette.text.secondary} />
+        <Tooltip
+          contentStyle={{
+            backgroundColor: 'rgba(255, 255, 255, 0.9)',
+            borderColor: theme.palette.divider,
+            borderRadius: theme.shape.borderRadius,
+            boxShadow: theme.shadows[3],
+          }}
+        />
+        <Legend />
+        <Area type="monotone" dataKey="consumption" name="Consumption" stroke={theme.palette.primary.dark} strokeWidth={2} fill="url(#energyGradient)" />
+      </AreaChart>
     </ResponsiveContainer>
   );
 
@@ -164,7 +160,13 @@ const EnergyCockpit: React.FC<EnergyCockpitProps> = ({ onChartClick }) => {
             sx={{ flex: 1, cursor: 'pointer', minHeight: '350px' }}
             onClick={() => onChartClick(<EnergyTrendChart />, 'Energy Consumption Trend')}
           >
-            <EnergyTrendChart />
+            {loading ? (
+              <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}><CircularProgress /></Box>
+            ) : error ? (
+              <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}><Alert severity="error">{error}</Alert></Box>
+            ) : (
+              <EnergyTrendChart />
+            )}
           </Box>
         </Paper>
       </Box>

@@ -80,7 +80,7 @@ const FlowDisplay: React.FC<FlowDisplayProps> = ({ alertingNodeId }) => {
 
   return (
     <Grid container spacing={3} sx={{ height: '100%', flexWrap: 'nowrap' }}>
-      <Grid item xs="auto" md={alertingNodeId ? 5 : 12}>
+      <Grid item xs={alertingNodeId ? 5 : 12} md={alertingNodeId ? 5 : 12}>
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', height: '100%', overflowY: 'auto', p: 2 }}>
           <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1 }}>
             {flowNodes.map((node, index) => {
@@ -148,7 +148,7 @@ const FlowDisplay: React.FC<FlowDisplayProps> = ({ alertingNodeId }) => {
         </Box>
       </Grid>
       {alertingNodeId && sopData[alertingNodeId] && (
-        <Grid item xs>
+        <Grid item xs={7}>
           <SOPViewer {...sopData[alertingNodeId]} />
         </Grid>
       )}

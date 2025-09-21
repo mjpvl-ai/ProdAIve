@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 import { Handle, Position } from 'reactflow';
 import type { NodeProps } from 'reactflow';
-import { Card, CardHeader, CardContent, Box, Typography, Chip, Avatar } from '@mui/material';
+import { Card, CardHeader, CardContent, Typography, Chip, Avatar } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';

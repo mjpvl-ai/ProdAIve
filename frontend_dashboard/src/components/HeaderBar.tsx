@@ -71,7 +71,6 @@ const HeaderBar: React.FC<HeaderBarProps> = ({
   onAIAssistantToggle,
   aiAssistantOpen,
   currentView,
-  onAIAssistantFullscreenToggle,
   onSelectView,
   menuItems
 }) => {

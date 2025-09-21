@@ -46,7 +46,7 @@ interface Alert {
 type AssistantMode = 'chat' | 'voice';
 type ConversationState = 'idle' | 'listening' | 'speaking' | 'alerting';
 
-const GeminiAIAssistant: React.FC<GeminiAIAssistantProps> = ({ onTriggerAlert, position, onPositionChange, isFullScreen, onToggleFullScreen, alert, onSelectView }) => {
+const GeminiAIAssistant: React.FC<GeminiAIAssistantProps> = ({ isFullScreen, onToggleFullScreen, alert, onSelectView }) => {
   const theme = useTheme();
   const [mode, setMode] = useState<AssistantMode>('voice');
   const [conversationState, setConversationState] = useState<ConversationState>('idle');
@@ -162,10 +162,10 @@ const GeminiAIAssistant: React.FC<GeminiAIAssistantProps> = ({ onTriggerAlert, p
 
     if (newUserMessage.text.toLowerCase().includes('plan operations')) {
       const planSteps = [
-        'Analyzing current kiln data...',
+        'Analyzing current kiln data...', 
         'Identifying optimal temperature adjustments...',
-        'Calculating fuel efficiency improvements...',
-        'Generating new operational parameters...',
+        'Calculating fuel efficiency improvements...', 
+        'Generating new operational parameters...', 
         'Plan operations complete. Applying changes.',
       ];
 
