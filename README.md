@@ -15,7 +15,31 @@ ProdAIve aims to make complex industrial data accessible and actionable. It comb
 
 This vision guides the development of all components within the ProdAIve ecosystem, ensuring a focus on clarity, interactivity, and actionability.
 
-## 📂 Repository Structure
+## 🛠️ Technology Stack
+
+The ProdAIve platform is built on a modern, scalable technology stack, leveraging best-in-class tools for frontend, data processing, and artificial intelligence.
+
+| Category                | Technology                                                                                                                                                           |
+| ----------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Frontend**            | ![React](https://img.shields.io/badge/React-blue?logo=react) ![TypeScript](https://img.shields.io/badge/TypeScript-blue?logo=typescript) ![Vite](https://img.shields.io/badge/Vite-purple?logo=vite) ![Material-UI](https://img.shields.io/badge/MUI-blue?logo=mui) ![Reactflow](https://img.shields.io/badge/Reactflow-orange) ![Recharts](https://img.shields.io/badge/Recharts-green) ![Framer Motion](https://img.shields.io/badge/Framer-black?logo=framer) |
+| **Data & ML**           | ![Python](https://img.shields.io/badge/Python-blue?logo=python) ![Scikit-learn](https://img.shields.io/badge/Scikit--learn-orange?logo=scikit-learn)                     |
+| **Cloud & MLOps**       | ![Google Cloud](https://img.shields.io/badge/Google_Cloud-blue?logo=google-cloud) ![Google BigQuery](https://img.shields.io/badge/BigQuery-blue?logo=google-bigquery) ![Vertex AI](https://img.shields.io/badge/Vertex_AI-blue?logo=google-cloud) |
+| **Agentic AI**          | ![Google Gemini](https://img.shields.io/badge/Google_Gemini-blue?logo=google-gemini)                                                                                 |
+
+## 🤖 Agentic AI Integration Flow
+
+The core innovation of ProdAIve is its **agentic AI**, powered by Google's Gemini model. The AI is not just a passive chatbot; it's an active, intelligent partner that guides the user through complex data analysis and troubleshooting workflows.
+
+The integration flow is designed to be proactive and intuitive:
+
+1.  **Proactive Anomaly Detection**: The system continuously monitors real-time data streams from the industrial process.
+2.  **AI-Triggered Alert**: When the backend detects a significant anomaly (e.g., a temperature spike in the kiln), it triggers the AI agent.
+3.  **Guided Response**: The Gemini AI Assistant automatically opens in the UI, presenting a clear, concise alert. Simultaneously, it provides a direct link to the relevant Standard Operating Procedure (SOP) and pivots the main dashboard view to the exact location of the problem on the Process Flow diagram, highlighting the affected component.
+4.  **Conversational Navigation**: The user can then engage with the AI using natural language. For example, asking "Show me the kiln's health details" or "What's the impact on energy consumption?"
+5.  **Orchestrated UI Changes**: The AI agent interprets these commands and orchestrates the frontend, seamlessly navigating the user to the correct dashboard (e.g., Kiln Health, Energy Cockpit) with smooth, animated transitions. This creates a fluid "analytical story" where the AI guides the user from problem detection to deep-dive analysis and resolution.
+6.  **Interactive & Flexible**: The AI panel is fully interactive, allowing for an immersive chat experience or the ability to hide it to focus solely on the data visualizations.
+
+## � Repository Structure
 
 ```
 .
