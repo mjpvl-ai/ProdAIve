@@ -1,30 +1,62 @@
-import React from 'react';
-import { Box, Typography, Paper, List, ListItem, ListItemText, Chip, Grid, IconButton, Divider } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Box, Typography, Paper, List, ListItem, ListItemText, Chip, Grid, IconButton, Divider, CircularProgress, Alert } from '@mui/material';
 import { CheckCircleOutline, History, LightbulbOutlined, Check, Close } from '@mui/icons-material';
 
 const AIAgentActions: React.FC = () => {
+  const [actionLog, setActionLog] = useState<any[]>([]);
+  const [recommendations, setRecommendations] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Mock Data for AI Agent Actions and Recommendations
-  const actionLog = [
-    { id: 1, timestamp: '2025-09-19 11:00 AM', action: 'Adjusted fuel rate', parameter: 'Fuel Rate', value: '+2%', status: 'Executed' },
-    { id: 2, timestamp: '2025-09-19 10:30 AM', action: 'Increased kiln speed', parameter: 'Kiln Speed', value: '+0.1 RPM', status: 'Executed' },
-    { id: 3, timestamp: '2025-09-19 09:00 AM', action: 'Reduced raw material feed', parameter: 'Feed Rate', value: '-5%', status: 'Executed' },
-  ];
-
-  const recommendations = [
-    { id: 1, timestamp: '2025-09-19 11:30 AM', recommendation: 'Increase primary air flow by 3% to optimize combustion.', status: 'Pending', confidence: 0.95 },
-    { id: 2, timestamp: '2025-09-19 10:00 AM', recommendation: 'Reduce clinker cooler fan speed to conserve energy.', status: 'Pending', confidence: 0.88 },
-  ];
-
-  const handleApprove = (id: number) => {
-    console.log(`Approved recommendation ${id}`);
-    // In a real application, this would trigger an API call
+  const fetchData = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const [actionsResponse, recommendationsResponse] = await Promise.all([
+        fetch(`${import.meta.env.VITE_API_BASE_URL}/api/agent/actions`),
+        fetch(`${import.meta.env.VITE_API_BASE_URL}/api/agent/recommendations`),
+      ]);
+      const actionsData = await actionsResponse.json();
+      const recommendationsData = await recommendationsResponse.json();
+      setActionLog(actionsData);
+      setRecommendations(recommendationsData);
+    } catch (err) {
+      setError('Failed to fetch data.');
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleReject = (id: number) => {
-    console.log(`Rejected recommendation ${id}`);
-    // In a real application, this would trigger an API call
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const handleApprove = async (id: number) => {
+    try {
+      await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/agent/recommendations/${id}/approve`, { method: 'POST' });
+      fetchData(); // Refresh data after action
+    } catch (err) {
+      console.error('Failed to approve recommendation', err);
+    }
   };
+
+  const handleReject = async (id: number) => {
+    try {
+      await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/agent/recommendations/${id}/reject`, { method: 'POST' });
+      fetchData(); // Refresh data after action
+    } catch (err) {
+      console.error('Failed to reject recommendation', err);
+    }
+  };
+
+  if (loading) {
+    return <CircularProgress />;
+  }
+
+  if (error) {
+    return <Alert severity="error">{error}</Alert>;
+  }
 
   return (
     <Box>

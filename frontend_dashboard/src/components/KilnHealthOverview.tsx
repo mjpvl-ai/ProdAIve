@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Box, Typography, Grid, Chip, Paper, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Box, Typography, Grid, Chip, Paper, FormControl, InputLabel, Select, MenuItem, CircularProgress } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, AreaChart, Area, ReferenceLine, LineChart, Line } from 'recharts';
 
@@ -8,46 +8,7 @@ import WarningAmberOutlinedIcon from '@mui/icons-material/WarningAmberOutlined';
 import CheckCircleOutlineOutlinedIcon from '@mui/icons-material/CheckCircleOutlineOutlined';
 import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
-import SpeedIcon from '@mui/icons-material/Speed';
 import WhatshotIcon from '@mui/icons-material/Whatshot';
-import PowerIcon from '@mui/icons-material/Power';
-
-// --- Mock Data ---
-const mockKilnData = {
-  '8hours': Array.from({ length: 8 }, (_, i) => ({
-    time: `${String(i).padStart(2, '0')}:00`,
-    temp: 1420 + Math.sin(i / 2) * 15 + Math.random() * 10,
-    pressure: 50 + Math.sin(i / 3) * 2 + Math.random() * 2,
-    oxygen: 2.5 - Math.sin(i / 4) * 0.2 + Math.random() * 0.2,
-  })),
-  '24hours': Array.from({ length: 24 }, (_, i) => ({
-    time: `${String(i).padStart(2, '0')}:00`,
-    temp: 1410 + Math.sin(i / 4) * 20 + Math.random() * 15,
-    pressure: 48 + Math.sin(i / 6) * 3 + Math.random() * 3,
-    oxygen: 2.8 - Math.sin(i / 8) * 0.3 + Math.random() * 0.3,
-  })),
-  '7days': Array.from({ length: 7 }, (_, i) => ({
-    time: `Day ${i + 1}`,
-    temp: 1400 + Math.random() * 50,
-    pressure: 45 + Math.random() * 10,
-    oxygen: 2.5 + Math.random() * 1,
-  })),
-};
-
-const operationalParameters = {
-  kilnSpeed: { value: 3.5, unit: 'RPM', icon: <SpeedIcon /> },
-  fuelConsumption: { value: 85, unit: 'tons/hr', icon: <WhatshotIcon /> },
-  clinkerProduction: { value: 120, unit: 'tons/hr', icon: <PowerIcon /> },
-  kilnTemp: { value: 1452, unit: '°C', icon: <WhatshotIcon /> },
-  exhaustO2: { value: 3.2, unit: '%', icon: <SpeedIcon /> },
-  motorPower: { value: 250, unit: 'kW', icon: <PowerIcon /> },
-};
-
-const recentAlerts = [
-  { id: 1, type: 'Warning', message: 'High exhaust gas temperature detected', timestamp: '2025-09-19 10:30 AM' },
-  { id: 2, type: 'Info', message: 'Kiln speed adjusted automatically', timestamp: '2025-09-19 09:45 AM' },
-  { id: 3, type: 'Critical', message: 'Vibration levels exceed critical threshold in Zone 2', timestamp: '2025-09-19 08:15 AM' },
-];
 
 // --- Helper Components ---
 const StatusChip: React.FC<{ status: string }> = ({ status }) => {
@@ -76,7 +37,7 @@ const ParameterCard: React.FC<{ title: string; value: number; unit: string; icon
   </Grid>
 );
 
-const AlertCard: React.FC<{ alert: typeof recentAlerts[0] }> = ({ alert }) => {
+const AlertCard: React.FC<{ alert: any }> = ({ alert }) => {
   const theme = useTheme();
   const alertConfig = {
     Warning: { color: theme.palette.warning.main, icon: <WarningAmberOutlinedIcon /> },
@@ -154,13 +115,32 @@ const ChartCard: React.FC<any> = ({ title, children, onClick }) => (
 
 // --- Main Component ---
 const KilnHealthOverview: React.FC<{ onChartClick?: (element: React.ReactNode, title: string) => void }> = ({ onChartClick }) => {
-  const [timeRange, setTimeRange] = useState('8hours');
+  const [timeRange, setTimeRange] = useState('24h');
+  const [kilnData, setKilnData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch(`${import.meta.env.VITE_API_BASE_URL}/api/kiln_health?timerange=${timeRange}`)
+      .then(response => response.json())
+      .then(data => {
+        setKilnData(data);
+        setLoading(false);
+      })
+      .catch(error => {
+        console.error('Error fetching kiln health data:', error);
+        setLoading(false);
+      });
+  }, [timeRange]);
 
   const handleTimeRangeChange = (event: any) => {
     setTimeRange(event.target.value as string);
   };
 
-  const data = mockKilnData[timeRange as keyof typeof mockKilnData];
+  if (loading) {
+    return <CircularProgress />;
+  }
+
+  const data = kilnData?.trends;
 
   return (
     <Box>
@@ -171,19 +151,15 @@ const KilnHealthOverview: React.FC<{ onChartClick?: (element: React.ReactNode, t
             <Typography variant="h4" sx={{ fontWeight: 700 }}>Kiln Health Overview</Typography>
             <Typography color="text.secondary">Detailed analysis of kiln performance and health metrics.</Typography>
           </Box>
-          <StatusChip status="Operational" />
+          <StatusChip status={kilnData?.status || 'Offline'} />
         </Grid>
 
         {/* Key Operational Parameters */}
         <Grid item xs={12}>
           <Typography variant="h5" sx={{ fontWeight: 600, mb: 2 }}>Key Operational Parameters</Typography>
           <Grid container spacing={2}>
-            <ParameterCard title="Kiln Speed" value={operationalParameters.kilnSpeed.value} unit={operationalParameters.kilnSpeed.unit} icon={operationalParameters.kilnSpeed.icon} />
-            <ParameterCard title="Fuel Consumption" value={operationalParameters.fuelConsumption.value} unit={operationalParameters.fuelConsumption.unit} icon={operationalParameters.fuelConsumption.icon} />
-            <ParameterCard title="Clinker Production" value={operationalParameters.clinkerProduction.value} unit={operationalParameters.clinkerProduction.unit} icon={operationalParameters.clinkerProduction.icon} />
-            <ParameterCard title="Kiln Temperature" value={operationalParameters.kilnTemp.value} unit={operationalParameters.kilnTemp.unit} icon={operationalParameters.kilnTemp.icon} />
-            <ParameterCard title="Exhaust Gas O₂" value={operationalParameters.exhaustO2.value} unit={operationalParameters.exhaustO2.unit} icon={operationalParameters.exhaustO2.icon} />
-            <ParameterCard title="Motor Power" value={operationalParameters.motorPower.value} unit={operationalParameters.motorPower.unit} icon={operationalParameters.motorPower.icon} />
+            <ParameterCard title="Fuel Consumption" value={kilnData?.operational_parameters?.fuel_consumption.value} unit={kilnData?.operational_parameters?.fuel_consumption.unit} icon={<WhatshotIcon />} />
+            <ParameterCard title="Kiln Temperature" value={kilnData?.operational_parameters?.kiln_temp.value} unit={kilnData?.operational_parameters?.kiln_temp.unit} icon={<WhatshotIcon />} />
           </Grid>
         </Grid>
 
@@ -193,9 +169,8 @@ const KilnHealthOverview: React.FC<{ onChartClick?: (element: React.ReactNode, t
           <FormControl sx={{ minWidth: 150 }} size="small">
             <InputLabel>Time Range</InputLabel>
             <Select value={timeRange} label="Time Range" onChange={handleTimeRangeChange}>
-              <MenuItem value="8hours">Last 8 Hours</MenuItem>
-              <MenuItem value="24hours">Last 24 Hours</MenuItem>
-              <MenuItem value="7days">Last 7 Days</MenuItem>
+              <MenuItem value="24h">Last 24 Hours</MenuItem>
+              <MenuItem value="7d">Last 7 Days</MenuItem>
             </Select>
           </FormControl>
         </Grid>
@@ -223,7 +198,7 @@ const KilnHealthOverview: React.FC<{ onChartClick?: (element: React.ReactNode, t
         <Grid item xs={12} mt={2} component="div">
           <Typography variant="h5" sx={{ fontWeight: 600, mb: 2 }}>Recent Alerts</Typography>
           <Grid container spacing={2}>
-            {recentAlerts.map(alert => <AlertCard key={alert.id} alert={alert} />)}
+            {kilnData?.recent_alerts.map((alert: any) => <AlertCard key={alert.id} alert={alert} />)}
           </Grid>
         </Grid>
 

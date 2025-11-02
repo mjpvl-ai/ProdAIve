@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { AppBar, Toolbar, IconButton, Typography, InputBase, Box, Badge, Avatar, Menu, MenuItem, Divider, Button } from '@mui/material';
 import { styled, alpha } from '@mui/material/styles';
+import MenuIcon from '@mui/icons-material/Menu';
 
 // --- Icon Imports ---
 import SearchIcon from '@mui/icons-material/Search';
@@ -77,6 +78,15 @@ const HeaderBar: React.FC<HeaderBarProps> = ({
   const [searchTerm, setSearchTerm] = useState('');
   const [notificationsAnchorEl, setNotificationsAnchorEl] = useState<null | HTMLElement>(null);
   const [profileAnchorEl, setProfileAnchorEl] = useState<null | HTMLElement>(null);
+  const [mobileMenuAnchorEl, setMobileMenuAnchorEl] = useState<null | HTMLElement>(null);
+
+  const handleMobileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setMobileMenuAnchorEl(event.currentTarget);
+  };
+
+  const handleMobileMenuClose = () => {
+    setMobileMenuAnchorEl(null);
+  };
 
   const handleNotificationsMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setNotificationsAnchorEl(event.currentTarget);
@@ -102,11 +112,21 @@ const HeaderBar: React.FC<HeaderBarProps> = ({
   return (
     <StyledAppBar position="fixed">
       <Toolbar>
+        <IconButton
+          size="large"
+          edge="start"
+          color="inherit"
+          aria-label="open drawer"
+          sx={{ mr: 2, display: { md: 'none' } }}
+          onClick={handleMobileMenuOpen}
+        >
+          <MenuIcon />
+        </IconButton>
         <Typography
           variant="h5" // Slightly larger for prominence
           noWrap
           component="div"
-          sx={{ fontWeight: 700, color: 'primary.main', mr: 4 }} // Use primary color and bold
+          sx={{ fontWeight: 700, color: 'primary.main', mr: 4, display: { xs: 'none', sm: 'block' } }} // Use primary color and bold
         >
           ProdAIve
         </Typography>
@@ -169,6 +189,24 @@ const HeaderBar: React.FC<HeaderBarProps> = ({
         </IconButton>
 
         {/* --- Menus --- */}
+        <Menu
+          anchorEl={mobileMenuAnchorEl}
+          open={Boolean(mobileMenuAnchorEl)}
+          onClose={handleMobileMenuClose}
+          sx={{ display: { xs: 'block', md: 'none' } }}
+        >
+          {menuItems.map((item) => (
+            <MenuItem
+              key={item.text}
+              onClick={() => {
+                onSelectView(item.view);
+                handleMobileMenuClose();
+              }}
+            >
+              <p>{item.text}</p>
+            </MenuItem>
+          ))}
+        </Menu>
         <Menu
           anchorEl={notificationsAnchorEl}
           open={Boolean(notificationsAnchorEl)}

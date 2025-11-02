@@ -1,71 +1,8 @@
-import React, { useState } from 'react';
-import { Box, Typography, Grid, FormControl, InputLabel, Select, MenuItem, Paper } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Box, Typography, Grid, FormControl, InputLabel, Select, MenuItem, Paper, CircularProgress, Alert } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ScatterChart, Scatter, ReferenceArea } from 'recharts';
 import { motion } from 'framer-motion';
-
-// --- Mock Data ---
-const predictedFCAO = 2.15;
-const confidenceInterval = '± 0.05';
-const targetFCAORange = '2.0 - 2.3';
-const targetFCAOMin = 2.0;
-const targetFCAOMax = 2.3;
-
-const fcaoData = {
-  '24hours': [
-    { name: '00:00', fcao: 2.1 },
-    { name: '04:00', fcao: 2.15 },
-    { name: '08:00', fcao: 2.2 },
-    { name: '12:00', fcao: 2.18 },
-    { name: '16:00', fcao: 2.25 },
-    { name: '20:00', fcao: 2.23 },
-  ],
-  '7days': [
-    { name: 'Day 1', fcao: 2.1 },
-    { name: 'Day 2', fcao: 2.15 },
-    { name: 'Day 3', fcao: 2.2 },
-    { name: 'Day 4', fcao: 2.18 },
-    { name: 'Day 5', fcao: 2.25 },
-    { name: 'Day 6', fcao: 2.23 },
-    { name: 'Day 7', fcao: 2.19 },
-  ],
-  '30days': [
-    { name: 'Week 1', fcao: 2.12 },
-    { name: 'Week 2', fcao: 2.18 },
-    { name: 'Week 3', fcao: 2.21 },
-    { name: 'Week 4', fcao: 2.15 },
-  ],
-};
-
-const correlationData = {
-  '24hours': [
-    { temp: 1400, fcao: 2.05 },
-    { temp: 1410, fcao: 2.10 },
-    { temp: 1420, fcao: 2.18 },
-    { temp: 1430, fcao: 2.25 },
-    { temp: 1440, fcao: 2.20 },
-    { temp: 1450, fcao: 2.30 },
-    { temp: 1460, fcao: 2.28 },
-  ],
-  '7days': [
-    { temp: 1405, fcao: 2.08 },
-    { temp: 1415, fcao: 2.12 },
-    { temp: 1425, fcao: 2.20 },
-    { temp: 1435, fcao: 2.27 },
-    { temp: 1445, fcao: 2.22 },
-    { temp: 1455, fcao: 2.32 },
-    { temp: 1465, fcao: 2.30 },
-  ],
-  '30days': [
-    { temp: 1410, fcao: 2.10 },
-    { temp: 1420, fcao: 2.15 },
-    { temp: 1430, fcao: 2.20 },
-    { temp: 1440, fcao: 2.25 },
-    { temp: 1450, fcao: 2.20 },
-    { temp: 1460, fcao: 2.28 },
-    { temp: 1470, fcao: 2.35 },
-  ],
-};
 
 const cardVariants = {
   hidden: { opacity: 0, y: 20 },
@@ -76,7 +13,7 @@ interface PredictiveQualityDashboardProps {
   onChartClick?: (element: React.ReactNode, title: string) => void;
 }
 
-const FcaoTrendChart: React.FC<{ data: any[] }> = ({ data }) => {
+const FcaoTrendChart: React.FC<{ data: any[], targetMin: number, targetMax: number }> = ({ data, targetMin, targetMax }) => {
   const theme = useTheme();
   return (
     <ResponsiveContainer width="100%" height="100%">
@@ -90,7 +27,7 @@ const FcaoTrendChart: React.FC<{ data: any[] }> = ({ data }) => {
           labelFormatter={(label: string) => `Time: ${label}`}
         />
         <Legend />
-        <ReferenceArea y1={targetFCAOMin} y2={targetFCAOMax} strokeOpacity={0.3} fill={theme.palette.success.light} />
+        <ReferenceArea y1={targetMin} y2={targetMax} strokeOpacity={0.3} fill={theme.palette.success.light} />
         <Line type="monotone" dataKey="fcao" name="f-CaO" stroke={theme.palette.primary.main} strokeWidth={2} activeDot={{ r: 8 }} />
       </LineChart>
     </ResponsiveContainer>
@@ -126,16 +63,45 @@ const ChartCard: React.FC<any> = ({ title, children, onClick, headerContent }) =
 );
 
 const PredictiveQualityDashboard: React.FC<PredictiveQualityDashboardProps> = ({ onChartClick }) => {
-  const [timeRange, setTimeRange] = useState('7days');
+  const [timeRange, setTimeRange] = useState('7d');
+  const [qualityData, setQualityData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/predictive_quality?timerange=${timeRange}`);
+        const data = await response.json();
+        setQualityData(data);
+      } catch (err) {
+        setError('Failed to fetch predictive quality data.');
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [timeRange]);
 
   const handleTimeRangeChange = (event: any) => {
     setTimeRange(event.target.value as string);
   };
 
-  // Calculate KPIs based on current time range data
-  const currentFCAOData = fcaoData[timeRange as keyof typeof fcaoData];
-  const averageFCAO = (currentFCAOData.reduce((sum, entry) => sum + entry.fcao, 0) / currentFCAOData.length).toFixed(2);
-  const inTargetRangeCount = currentFCAOData.filter(entry => entry.fcao >= targetFCAOMin && entry.fcao <= targetFCAOMax).length;
+  if (loading) {
+    return <CircularProgress />;
+  }
+
+  if (error) {
+    return <Alert severity="error">{error}</Alert>;
+  }
+
+  const currentFCAOData = qualityData?.trends;
+  const averageFCAO = (currentFCAOData.reduce((sum: any, entry: any) => sum + entry.fcao, 0) / currentFCAOData.length).toFixed(2);
+  const inTargetRangeCount = currentFCAOData.filter((entry: any) => entry.fcao >= qualityData?.target_fcao_min && entry.fcao <= qualityData?.target_fcao_max).length;
   const inTargetRangePercentage = ((inTargetRangeCount / currentFCAOData.length) * 100).toFixed(1);
 
   return (
@@ -153,23 +119,23 @@ const PredictiveQualityDashboard: React.FC<PredictiveQualityDashboardProps> = ({
           <Paper component={motion.div} variants={cardVariants} sx={{ height: '100%', p: 3, borderRadius: 2, boxShadow: 3, textAlign: 'center' }}>
             <Typography variant="h6" color="text.secondary" gutterBottom>Real-time f-CaO Prediction</Typography>
             <Typography variant="h2" color="primary" sx={{ mt: 1, fontWeight: 700 }}>
-              {predictedFCAO}
+              {qualityData?.predicted_fcao}
               <Typography variant="h4" component="span" sx={{ ml: 0.5, color: 'text.secondary' }}>
                 %
               </Typography>
             </Typography>
             <Typography variant="body1" color="text.secondary" sx={{ mt: 1 }}>
-              Confidence: {confidenceInterval}
+              Confidence: {qualityData?.confidence_interval}
             </Typography>
             <Typography variant="body1" color="text.secondary">
-              Target Range: {targetFCAORange}
+              Target Range: {qualityData?.target_fcao_range}
             </Typography>
           </Paper>
         </Grid>
 
         <Grid item xs={12} md={4}>
           <Paper component={motion.div} variants={cardVariants} sx={{ height: '100%', p: 3, borderRadius: 2, boxShadow: 3, textAlign: 'center' }}>
-            <Typography variant="h6" color="text.secondary" gutterBottom>Average f-CaO ({timeRange === '24hours' ? '24H' : timeRange === '7days' ? '7D' : '30D'})</Typography>
+            <Typography variant="h6" color="text.secondary" gutterBottom>Average f-CaO ({timeRange === '24h' ? '24H' : '7D'})</Typography>
             <Typography variant="h2" color="secondary" sx={{ mt: 1, fontWeight: 700 }}>
               {averageFCAO}
               <Typography variant="h4" component="span" sx={{ ml: 0.5, color: 'text.secondary' }}>
@@ -177,7 +143,7 @@ const PredictiveQualityDashboard: React.FC<PredictiveQualityDashboardProps> = ({
               </Typography>
             </Typography>
             <Typography variant="body1" color="text.secondary" sx={{ mt: 1 }}>
-              Target: {targetFCAORange}
+              Target: {qualityData?.target_fcao_range}
             </Typography>
           </Paper>
         </Grid>
@@ -200,28 +166,27 @@ const PredictiveQualityDashboard: React.FC<PredictiveQualityDashboardProps> = ({
         <Grid item xs={12} md={8} component="div">
           <ChartCard
             title="Historical f-CaO Trends"
-            onClick={onChartClick ? () => onChartClick(<FcaoTrendChart data={fcaoData[timeRange as keyof typeof fcaoData]} />, 'Historical f-CaO Trends') : undefined}
+            onClick={onChartClick ? () => onChartClick(<FcaoTrendChart data={qualityData?.trends} targetMin={qualityData?.target_fcao_min} targetMax={qualityData?.target_fcao_max} />, 'Historical f-CaO Trends') : undefined}
             headerContent={
               <FormControl sx={{ minWidth: 150 }} size="small">
                 <InputLabel>Time Range</InputLabel>
                 <Select value={timeRange} label="Time Range" onChange={handleTimeRangeChange}>
-                  <MenuItem value={"24hours"}>Last 24 Hours</MenuItem>
-                  <MenuItem value={"7days"}>Last 7 Days</MenuItem>
-                  <MenuItem value={"30days"}>Last 30 Days</MenuItem>
+                  <MenuItem value={"24h"}>Last 24 Hours</MenuItem>
+                  <MenuItem value={"7d"}>Last 7 Days</MenuItem>
                 </Select>
               </FormControl>
             }
           >
-            <FcaoTrendChart data={fcaoData[timeRange as keyof typeof fcaoData]} />
+            <FcaoTrendChart data={qualityData?.trends} targetMin={qualityData?.target_fcao_min} targetMax={qualityData?.target_fcao_max} />
           </ChartCard>
         </Grid>
 
         <Grid item xs={12} md={4}>
           <ChartCard
             title="Correlation Analysis: Kiln Temperature vs. f-CaO"
-            onClick={onChartClick ? () => onChartClick(<CorrelationChart data={correlationData[timeRange as keyof typeof correlationData]} />, 'Correlation Analysis: Kiln Temperature vs. f-CaO') : undefined}
+            onClick={onChartClick ? () => onChartClick(<CorrelationChart data={qualityData?.correlation_data} />, 'Correlation Analysis: Kiln Temperature vs. f-CaO') : undefined}
           >
-            <CorrelationChart data={correlationData[timeRange as keyof typeof correlationData]} />
+            <CorrelationChart data={qualityData?.correlation_data} />
           </ChartCard>
         </Grid>
       </Grid>

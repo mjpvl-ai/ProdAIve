@@ -1,0 +1,60 @@
+sources:
+  bigquery_forecasting_source:
+    kind: "bigquery"
+    # IMPORTANT: Replace "your-project-id" with your Google Cloud Project ID.
+    project: "your-project-id"
+
+tools:
+  - name: forecastKilnTemperature
+    description: "Forecasts the kiln temperature for a given number of days."
+    kind: "bigquery-sql"
+    source: "bigquery_forecasting_source"
+    parameters:
+      - name: "days"
+        type: "integer"
+        description: "The number of days to forecast."
+    statement: |
+      SELECT
+        forecast_timestamp,
+        forecast_value,
+        prediction_interval_lower_bound,
+        prediction_interval_upper_bound
+      FROM
+        ML.FORECAST(MODEL `your-project-id.your_dataset.kiln_temperature_model`,
+                    STRUCT(@days AS horizon, 0.8 AS confidence_level))
+
+  - name: forecastFuelConsumption
+    description: "Forecasts the fuel consumption for a given number of days."
+    kind: "bigquery-sql"
+    source: "bigquery_forecasting_source"
+    parameters:
+      - name: "days"
+        type: "integer"
+        description: "The number of days to forecast."
+    statement: |
+      SELECT
+        forecast_timestamp,
+        forecast_value,
+        prediction_interval_lower_bound,
+        prediction_interval_upper_bound
+      FROM
+        ML.FORECAST(MODEL `your-project-id.your_dataset.fuel_consumption_model`,
+                    STRUCT(@days AS horizon, 0.8 AS confidence_level))
+
+  - name: forecastClinkerProduction
+    description: "Forecasts the clinker production for a given number of days."
+    kind: "bigquery-sql"
+    source: "bigquery_forecasting_source"
+    parameters:
+      - name: "days"
+        type: "integer"
+        description: "The number of days to forecast."
+    statement: |
+      SELECT
+        forecast_timestamp,
+        forecast_value,
+        prediction_interval_lower_bound,
+        prediction_interval_upper_bound
+      FROM
+        ML.FORECAST(MODEL `your-project-id.your_dataset.clinker_production_model`,
+                    STRUCT(@days AS horizon, 0.8 AS confidence_level))

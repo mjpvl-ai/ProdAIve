@@ -1,0 +1,15 @@
+fastapi
+uvicorn
+requests
+livekit
+google-cloud-bigquery
+pandas
+db-dtypes
+google-adk
+PyYAML
+python-dotenv
+livekit-agents[google]
+livekit-api
+livekit-plugins-noise-cancellation
+livekit-plugins-silero
+livekit-plugins-turn-detector

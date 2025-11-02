@@ -1,4 +1,4 @@
- # ProdAIve
+# ProdAIve
 
 ![React](https://img.shields.io/badge/React-Frontend-blue?logo=react)
 ![Python](https://img.shields.io/badge/Python-ML/Data-blue?logo=python)
@@ -39,30 +39,31 @@ The integration flow is designed to be proactive and intuitive:
 5.  **Orchestrated UI Changes**: The AI agent interprets these commands and orchestrates the frontend, seamlessly navigating the user to the correct dashboard (e.g., Kiln Health, Energy Cockpit) with smooth, animated transitions. This creates a fluid "analytical story" where the AI guides the user from problem detection to deep-dive analysis and resolution.
 6.  **Interactive & Flexible**: The AI panel is fully interactive, allowing for an immersive chat experience or the ability to hide it to focus solely on the data visualizations.
 
-## � Repository Structure
+## Repository Structure
 
 ```
 .
-├── docs/                # Project documentation, design documents, and diagrams (PDFs, etc.)
-├── frontend_dashboard/  # React-based frontend application
-│   └── README.md        # --> Detailed frontend setup and documentation
-│
-├── mlops/               # (Planned) Scripts for MLOps pipeline (deployment, monitoring)
-├── data_simulation/     # (Planned) Scripts to generate synthetic industrial data
-├── model_training/      # (Planned) Notebooks and scripts for training ML models
-│
-└── README.md            # This file: High-level overview of the ProdAIve project
+├── adk_data_science_agent/ # A data science agent
+├── backend_services/       # Backend services for the platform
+├── data_simulation/        # Scripts to generate synthetic industrial data
+├── docs/                   # Project documentation, design documents, and diagrams
+├── frontend_dashboard/     # React-based frontend application
+├── mlops/                  # Scripts for MLOps pipeline (deployment, monitoring)
+├── model_training/         # Notebooks and scripts for training ML models
+├── vertex_ai_pipelines/    # Vertex AI pipeline definitions
+└── README.md               # This file: High-level overview of the project
 ```
 
-## 🏛️ Architecture Overview
+## Architecture Overview
 
-The ProdAIve platform is composed of three main components that work together to deliver a seamless, data-driven experience:
+The ProdAIve platform is composed of several key components that work together to deliver a seamless, data-driven experience:
 
 1.  **Frontend Dashboard**: A modern, responsive web application that serves as the primary user interface for data visualization and interaction.
-2.  **Data & ML Pipeline**: A set of scripts and services responsible for data simulation, storage, preprocessing, and model training/deployment on Google Cloud.
-3.  **Backend Services (Planned)**: The future API layer that will connect the frontend to the live data pipeline and orchestrate AI assistant interactions.
+2.  **Backend Services**: The API layer that connects the frontend to the live data pipeline and orchestrates AI assistant interactions.
+3.  **Data & ML Pipeline**: A set of scripts and services responsible for data simulation, storage, preprocessing, and model training/deployment on Google Cloud.
+4.  **Data Science Agent**: An autonomous agent for data analysis and insights.
 
-## 📂 Project Components
+## Project Components
 
 ### 🖥️ Frontend Dashboard (`/frontend_dashboard`)
 
@@ -71,40 +72,47 @@ The main web application and user interface for the ProdAIve dashboard. It provi
 *   **Purpose**: To visualize complex industrial data, present AI-driven alerts, and guide users through troubleshooting workflows.
 *   **Tech Stack**: React, TypeScript, Vite, Material-UI, Recharts, Reactflow, Framer Motion.
 *   **Key Features**: AI Assistant, interactive process flow diagrams, real-time KPI monitoring, and predictive quality dashboards.
-*   **Status**: Core UI/UX is implemented with mock data. Ready for backend integration.
+*   **Status**: In active development.
 
-> **For detailed setup and development instructions, please see the frontend_dashboard/README.md.**
+> **For detailed setup and development instructions, please see the `frontend_dashboard/README.md`.**
 
-### 🔬 Data & ML Pipeline (`/mlops`, `/data_simulation`, `/model_training`)
+### ⚙️ Backend Services (`/backend_services`)
+
+This component serves as the central nervous system of the platform, connecting the frontend to the data pipeline and enabling real-time functionality.
+
+*   **Purpose**: To serve live data from BigQuery to the frontend, handle API requests, and manage the logic for the Gemini AI Assistant.
+*   **Tech Stack**: Python (FastAPI), Google Cloud Functions.
+*   **Status**: In active development.
+
+### 🔬 Data & ML Pipeline (`/mlops`, `/data_simulation`, `/model_training`, `/vertex_ai_pipelines`)
 
 This is the data backbone of the project. It includes scripts for simulating industrial data, managing it in the cloud, and training the machine learning models that power the platform's predictive insights.
 
 *   **Purpose**: To create a realistic data environment and deploy a predictive model for clinker quality.
 *   **Tech Stack**: Python, Google BigQuery, Google Vertex AI, Scikit-learn.
 *   **Workflow**:
-    1.  `simulate_kiln_data.py`: Generates simulated kiln process data.
-    2.  `load_data_to_bigquery.py`: Loads the simulated data into a BigQuery table.
-    3.  `preprocess_data.py`: Fetches and preprocesses data from BigQuery for training.
-    4.  `train_clinker_model.py`: Trains a RandomForest model on the processed data.
-    5.  `deploy_model_to_vertex_ai.py`: Deploys the trained model to a Vertex AI endpoint for real-time predictions.
+    1.  `data_simulation/`: Generates simulated kiln process data.
+    2.  `model_training/`: Trains machine learning models on the simulated data.
+    3.  `mlops/`: Deploys the trained models to Vertex AI.
+    4.  `vertex_ai_pipelines/`: Defines and manages the Vertex AI pipelines.
+*   **Status**: Core pipeline is implemented and deployed on Google Cloud.
 
-### ⚙️ Backend Services (Planned)
+### 🤖 Data Science Agent (`/adk_data_science_agent`)
 
-This component will serve as the central nervous system of the platform, connecting the frontend to the data pipeline and enabling real-time functionality.
+An autonomous agent that can perform data analysis tasks.
 
-*   **Purpose**: To serve live data from BigQuery to the frontend, handle API requests, and manage the logic for the Gemini AI Assistant.
-*   **Tech Stack (Proposed)**: Python (FastAPI/Flask), Google Cloud Functions, or another scalable serverless solution.
-*   **Status**: Not yet implemented. This is the next major development phase.
+*   **Purpose**: To provide automated data science capabilities, such as data exploration, analysis, and visualization.
+*   **Tech Stack**: Python, LangChain.
+*   **Status**: In active development.
 
 ## 🚀 Project Status & Next Steps
 
-The high-level UI/UX design and core frontend structure are complete, with visual enhancements and mock data integration. The initial data and machine learning pipeline has been established and deployed on Google Cloud.
+The project is in a state of active development. The core components of the platform have been implemented, including the frontend, backend, and data pipeline. The next steps will focus on:
 
-The next crucial step is to **integrate the frontend with actual backend services**. This will involve:
-
-1.  Building a robust API to fetch real-time data from BigQuery.
-2.  Connecting the frontend components to this live data feed.
-3.  Developing the AI assistant's logic to interact with live data and provide actionable insights based on model predictions from Vertex AI.
+1.  **Integrating the frontend with the backend services.**
+2.  **Expanding the capabilities of the data science agent.**
+3.  **Improving the accuracy of the machine learning models.**
+4.  **Adding more data sources and visualizations.**
 
 ## 📄 License
 

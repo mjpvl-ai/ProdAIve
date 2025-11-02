@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Box, Typography, Paper, FormControlLabel, Switch, RadioGroup, Radio, FormControl, FormLabel, TextField, Button } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Box, Typography, Paper, FormControlLabel, Switch, RadioGroup, Radio, FormControl, FormLabel, TextField, Button, CircularProgress, Alert } from '@mui/material';
 import { motion } from 'framer-motion';
 
 const cardVariants = {
@@ -8,33 +8,65 @@ const cardVariants = {
 };
 
 const Settings: React.FC = () => {
-  
-  const [darkMode, setDarkMode] = useState(false); // This would ideally come from a global state/context
-  const [language, setLanguage] = useState('en');
-  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
-  const [userName, setUserName] = useState('John Doe');
-  const [userEmail, setUserEmail] = useState('john.doe@example.com');
+  const [settings, setSettings] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchData = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/settings`);
+      const data = await response.json();
+      setSettings(data);
+    } catch (err) {
+      setError('Failed to fetch settings.');
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const updateSetting = async (newSettings: any) => {
+    try {
+      await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/settings`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newSettings),
+      });
+      setSettings(newSettings);
+    } catch (err) {
+      console.error('Failed to update settings', err);
+    }
+  };
 
   const handleDarkModeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setDarkMode(event.target.checked);
-    // In a real app, you'd update the theme context here
-    console.log('Dark mode toggled:', event.target.checked);
+    updateSetting({ ...settings, darkMode: event.target.checked });
   };
 
   const handleLanguageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setLanguage(event.target.value);
-    console.log('Language changed to:', event.target.value);
+    updateSetting({ ...settings, language: event.target.value });
   };
 
   const handleNotificationsChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setNotificationsEnabled(event.target.checked);
-    console.log('Notifications toggled:', event.target.checked);
+    updateSetting({ ...settings, notificationsEnabled: event.target.checked });
   };
 
   const handleProfileSave = () => {
-    console.log('Profile saved:', { userName, userEmail });
-    // In a real app, you'd send this data to a backend service
+    updateSetting(settings);
   };
+
+  if (loading) {
+    return <CircularProgress />;
+  }
+
+  if (error) {
+    return <Alert severity="error">{error}</Alert>;
+  }
 
   return (
     <motion.div initial="hidden" animate="visible" transition={{ staggerChildren: 0.1 }}>
@@ -44,7 +76,7 @@ const Settings: React.FC = () => {
         <Paper component={motion.div} variants={cardVariants} sx={{ p: 3, mb: 3, borderRadius: 2, boxShadow: 3 }}>
           <Typography variant="h6" gutterBottom>Appearance</Typography>
           <FormControlLabel
-            control={<Switch checked={darkMode} onChange={handleDarkModeChange} name="darkMode" />}
+            control={<Switch checked={settings?.darkMode} onChange={handleDarkModeChange} name="darkMode" />}
             label="Dark Mode"
           />
         </Paper>
@@ -53,7 +85,7 @@ const Settings: React.FC = () => {
           <Typography variant="h6" gutterBottom>Language</Typography>
           <FormControl component="fieldset">
             <FormLabel component="legend">Select Language</FormLabel>
-            <RadioGroup row aria-label="language" name="language" value={language} onChange={handleLanguageChange}>
+            <RadioGroup row aria-label="language" name="language" value={settings?.language} onChange={handleLanguageChange}>
               <FormControlLabel value="en" control={<Radio />} label="English" />
               <FormControlLabel value="es" control={<Radio />} label="Spanish" />
               <FormControlLabel value="fr" control={<Radio />} label="French" />
@@ -64,7 +96,7 @@ const Settings: React.FC = () => {
         <Paper component={motion.div} variants={cardVariants} sx={{ p: 3, mb: 3, borderRadius: 2, boxShadow: 3 }}>
           <Typography variant="h6" gutterBottom>Notifications</Typography>
           <FormControlLabel
-            control={<Switch checked={notificationsEnabled} onChange={handleNotificationsChange} name="notifications" />}
+            control={<Switch checked={settings?.notificationsEnabled} onChange={handleNotificationsChange} name="notifications" />}
             label="Enable Notifications"
           />
         </Paper>
@@ -75,15 +107,15 @@ const Settings: React.FC = () => {
             <TextField
               label="Name"
               variant="outlined"
-              value={userName}
-              onChange={(e) => setUserName(e.target.value)}
+              value={settings?.userName}
+              onChange={(e) => setSettings({ ...settings, userName: e.target.value })}
               fullWidth
             />
             <TextField
               label="Email"
               variant="outlined"
-              value={userEmail}
-              onChange={(e) => setUserEmail(e.target.value)}
+              value={settings?.userEmail}
+              onChange={(e) => setSettings({ ...settings, userEmail: e.target.value })}
               fullWidth
             />
             <Button variant="contained" onClick={handleProfileSave} sx={{ mt: 2 }}>Save Profile</Button>

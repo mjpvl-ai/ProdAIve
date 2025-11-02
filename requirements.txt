@@ -5,3 +5,6 @@ scikit-learn
 joblib
 google-auth-oauthlib
 google-cloud-storage
+httpx
+google-adk
+google-cloud-texttospeech

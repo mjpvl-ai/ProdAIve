@@ -1,0 +1,341 @@
+/home/jayaprakash/Documents/CogniX/ProdAIve/adk_data_science_agent/.venv/lib/python3.12/site-packages/google/adk/cli/fast_api.py:179: UserWarning: [EXPERIMENTAL] InMemoryCredentialService: This feature is experimental and may change or be removed in future versions without notice. It may introduce breaking changes at any time.
+  credential_service = InMemoryCredentialService()
+/home/jayaprakash/Documents/CogniX/ProdAIve/adk_data_science_agent/.venv/lib/python3.12/site-packages/google/adk/auth/credential_service/in_memory_credential_service.py:33: UserWarning: [EXPERIMENTAL] BaseCredentialService: This feature is experimental and may change or be removed in future versions without notice. It may introduce breaking changes at any time.
+  super().__init__()
+INFO:     Started server process [57171]
+INFO:     Waiting for application startup.
+
++-----------------------------------------------------------------------------+
+| ADK Web Server started                                                      |
+|                                                                             |
+| For local testing, access at http://127.0.0.1:8000.                         |
++-----------------------------------------------------------------------------+
+
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:33494 - "GET / HTTP/1.1" 307 Temporary Redirect
+INFO:     127.0.0.1:33502 - "GET /dev-ui/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44662 - "GET / HTTP/1.1" 307 Temporary Redirect
+INFO:     127.0.0.1:44662 - "GET /dev-ui/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44662 - "GET /dev-ui/chunk-EQDQRRRY.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44678 - "GET /dev-ui/main-W7QZBYAR.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44666 - "GET /dev-ui/polyfills-B6TNHZQ6.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44686 - "GET /dev-ui/styles-4VDSPQ37.css HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44678 - "GET /dev-ui/assets/config/runtime-config.json HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44678 - "GET /dev-ui/assets/ADK-512-color.svg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44678 - "GET /list-apps?relative_path=./ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44678 - "GET /dev-ui/adk_favicon.svg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44678 - "POST /apps/data_science/users/user/sessions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44678 - "GET /apps/data_science/eval_sets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44662 - "GET /apps/data_science/eval_results HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44678 - "GET /apps/data_science/users/user/sessions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44678 - "GET /apps/data_science/users/user/sessions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55818 - "POST /run_sse HTTP/1.1" 200 OK
+2025-10-31 21:03:56,158 - INFO - envs.py:47 - Loaded .env file for data_science at /home/jayaprakash/Documents/CogniX/ProdAIve/adk_data_science_agent/.env
+2025-10-31 21:03:56,164 - INFO - envs.py:47 - Loaded .env file for data_science at /home/jayaprakash/Documents/CogniX/ProdAIve/adk_data_science_agent/.env
+/home/jayaprakash/Documents/CogniX/ProdAIve/adk_data_science_agent/data_science/sub_agents/alloydb/tools.py:70: SyntaxWarning: "is not" with 'str' literal. Did you mean "!="?
+  if MCP_TOOLBOX_PORT is not "":
+2025-10-31 21:03:56,335 - INFO - _api_client.py:618 - The user provided project/location will take precedence over the Vertex AI API key from the environment variable.
+2025-10-31 21:03:56,521 - INFO - vertex_ai_code_executor.py:96 - No CODE_INTERPRETER_ID found in the environment. Create a new one.
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+E0000 00:00:1761924837.408794   57171 alts_credentials.cc:93] ALTS creds ignored. Not running on GCP and untrusted ALTS is not enabled.
+E0000 00:00:1761924840.326224   57171 alts_credentials.cc:93] ALTS creds ignored. Not running on GCP and untrusted ALTS is not enabled.
+2025-10-31 21:04:04,059 - INFO - base.py:85 - Creating Extension
+2025-10-31 21:04:04,059 - INFO - base.py:88 - Create Extension backing LRO: projects/143018974022/locations/us-central1/extensions/7979828096691863552/operations/7257187634252873728
+2025-10-31 21:05:47,422 - INFO - base.py:113 - Extension created. Resource name: projects/143018974022/locations/us-central1/extensions/7979828096691863552
+2025-10-31 21:05:47,422 - INFO - base.py:114 - To use this Extension in another session:
+2025-10-31 21:05:47,423 - INFO - base.py:115 - extension = vertexai.preview.extensions.Extension('projects/143018974022/locations/us-central1/extensions/7979828096691863552')
+E0000 00:00:1761924947.426457   57171 alts_credentials.cc:93] ALTS creds ignored. Not running on GCP and untrusted ALTS is not enabled.
+2025-10-31 21:05:50,391 - INFO - _api_client.py:618 - The user provided project/location will take precedence over the Vertex AI API key from the environment variable.
+2025-10-31 21:05:50,520 - ERROR - adk_web_server.py:1404 - Error in event_generator: Fail to load 'data_science' module. Unsupported region for Vertex AI, select from frozenset({'us-west2', 'southamerica-west1', 'northamerica-northeast2', 'europe-west1', 'us-central1', 'asia-south2', 'europe-central2', 'australia-southeast1', 'me-central1', 'europe-west2', 'asia-southeast1', 'us-east1', 'us-east5', 'us-west3', 'us-south1', 'asia-east2', 'europe-west4', 'asia-northeast2', 'us-east4', 'us-east7', 'australia-southeast2', 'europe-west6', 'asia-northeast1', 'us-west4', 'northamerica-northeast1', 'europe-west9', 'us-west1', 'europe-west8', 'africa-south1', 'asia-southeast2', 'me-central2', 'asia-east1', 'europe-southwest1', 'global', 'me-west1', 'europe-north1', 'europe-west12', 'asia-northeast3', 'europe-west3', 'asia-south1', 'southamerica-east1'})
+Traceback (most recent call last):
+  File "/home/jayaprakash/Documents/CogniX/ProdAIve/adk_data_science_agent/.venv/lib/python3.12/site-packages/google/adk/cli/adk_web_server.py", line 1383, in event_generator
+    runner = await self.get_runner_async(req.app_name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jayaprakash/Documents/CogniX/ProdAIve/adk_data_science_agent/.venv/lib/python3.12/site-packages/google/adk/cli/adk_web_server.py", line 469, in get_runner_async
+    agent_or_app = self.agent_loader.load_agent(app_name)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jayaprakash/Documents/CogniX/ProdAIve/adk_data_science_agent/.venv/lib/python3.12/site-packages/google/adk/cli/utils/agent_loader.py", line 271, in load_agent
+    agent_or_app = self._perform_load(agent_name)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jayaprakash/Documents/CogniX/ProdAIve/adk_data_science_agent/.venv/lib/python3.12/site-packages/google/adk/cli/utils/agent_loader.py", line 207, in _perform_load
+    if root_agent := self._load_from_module_or_package(actual_agent_name):
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jayaprakash/Documents/CogniX/ProdAIve/adk_data_science_agent/.venv/lib/python3.12/site-packages/google/adk/cli/utils/agent_loader.py", line 108, in _load_from_module_or_package
+    raise e
+  File "/home/jayaprakash/Documents/CogniX/ProdAIve/adk_data_science_agent/.venv/lib/python3.12/site-packages/google/adk/cli/utils/agent_loader.py", line 70, in _load_from_module_or_package
+    module_candidate = importlib.import_module(agent_name)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/importlib/__init__.py", line 90, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 995, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/home/jayaprakash/Documents/CogniX/ProdAIve/adk_data_science_agent/data_science/__init__.py", line 17, in <module>
+    from . import agent
+  File "/home/jayaprakash/Documents/CogniX/ProdAIve/adk_data_science_agent/data_science/agent.py", line 39, in <module>
+    from .sub_agents import bqml_agent
+  File "/home/jayaprakash/Documents/CogniX/ProdAIve/adk_data_science_agent/data_science/sub_agents/__init__.py", line 17, in <module>
+    from .bigquery.agent import bigquery_agent
+  File "/home/jayaprakash/Documents/CogniX/ProdAIve/adk_data_science_agent/data_science/sub_agents/bigquery/agent.py", line 29, in <module>
+    from .chase_sql import chase_db_tools
+  File "/home/jayaprakash/Documents/CogniX/ProdAIve/adk_data_science_agent/data_science/sub_agents/bigquery/chase_sql/chase_db_tools.py", line 24, in <module>
+    from .llm_utils import GeminiModel
+  File "/home/jayaprakash/Documents/CogniX/ProdAIve/adk_data_science_agent/data_science/sub_agents/bigquery/chase_sql/llm_utils.py", line 76, in <module>
+    aiplatform.init(
+  File "/home/jayaprakash/Documents/CogniX/ProdAIve/adk_data_science_agent/.venv/lib/python3.12/site-packages/google/cloud/aiplatform/initializer.py", line 244, in init
+    utils.validate_region(location)
+  File "/home/jayaprakash/Documents/CogniX/ProdAIve/adk_data_science_agent/.venv/lib/python3.12/site-packages/google/cloud/aiplatform/utils/__init__.py", line 319, in validate_region
+    raise ValueError(
+ValueError: Fail to load 'data_science' module. Unsupported region for Vertex AI, select from frozenset({'us-west2', 'southamerica-west1', 'northamerica-northeast2', 'europe-west1', 'us-central1', 'asia-south2', 'europe-central2', 'australia-southeast1', 'me-central1', 'europe-west2', 'asia-southeast1', 'us-east1', 'us-east5', 'us-west3', 'us-south1', 'asia-east2', 'europe-west4', 'asia-northeast2', 'us-east4', 'us-east7', 'australia-southeast2', 'europe-west6', 'asia-northeast1', 'us-west4', 'northamerica-northeast1', 'europe-west9', 'us-west1', 'europe-west8', 'africa-south1', 'asia-southeast2', 'me-central2', 'asia-east1', 'europe-southwest1', 'global', 'me-west1', 'europe-north1', 'europe-west12', 'asia-northeast3', 'europe-west3', 'asia-south1', 'southamerica-east1'})
+INFO:     127.0.0.1:52920 - "WebSocket /run_live?app_name=data_science&user_id=user&session_id=61d820b5-ec46-47ef-b834-19e28e31d1d9" [accepted]
+INFO:     connection open
+2025-10-31 21:05:50,589 - INFO - envs.py:47 - Loaded .env file for data_science at /home/jayaprakash/Documents/CogniX/ProdAIve/adk_data_science_agent/.env
+2025-10-31 21:05:50,593 - INFO - envs.py:47 - Loaded .env file for data_science at /home/jayaprakash/Documents/CogniX/ProdAIve/adk_data_science_agent/.env
+2025-10-31 21:05:50,598 - ERROR - adk_web_server.py:1529 - Error during live websocket communication: Fail to load 'data_science' module. Unsupported region for Vertex AI, select from frozenset({'us-west2', 'southamerica-west1', 'northamerica-northeast2', 'europe-west1', 'us-central1', 'asia-south2', 'europe-central2', 'australia-southeast1', 'me-central1', 'europe-west2', 'asia-southeast1', 'us-east1', 'us-east5', 'us-west3', 'us-south1', 'asia-east2', 'europe-west4', 'asia-northeast2', 'us-east4', 'us-east7', 'australia-southeast2', 'europe-west6', 'asia-northeast1', 'us-west4', 'northamerica-northeast1', 'europe-west9', 'us-west1', 'europe-west8', 'africa-south1', 'asia-southeast2', 'me-central2', 'asia-east1', 'europe-southwest1', 'global', 'me-west1', 'europe-north1', 'europe-west12', 'asia-northeast3', 'europe-west3', 'asia-south1', 'southamerica-east1'})
+Traceback (most recent call last):
+  File "/home/jayaprakash/Documents/CogniX/ProdAIve/adk_data_science_agent/.venv/lib/python3.12/site-packages/google/adk/cli/adk_web_server.py", line 1525, in run_agent_live
+    task.result()
+  File "/home/jayaprakash/Documents/CogniX/ProdAIve/adk_data_science_agent/.venv/lib/python3.12/site-packages/google/adk/cli/adk_web_server.py", line 1494, in forward_events
+    runner = await self.get_runner_async(app_name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jayaprakash/Documents/CogniX/ProdAIve/adk_data_science_agent/.venv/lib/python3.12/site-packages/google/adk/cli/adk_web_server.py", line 469, in get_runner_async
+    agent_or_app = self.agent_loader.load_agent(app_name)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jayaprakash/Documents/CogniX/ProdAIve/adk_data_science_agent/.venv/lib/python3.12/site-packages/google/adk/cli/utils/agent_loader.py", line 271, in load_agent
+    agent_or_app = self._perform_load(agent_name)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jayaprakash/Documents/CogniX/ProdAIve/adk_data_science_agent/.venv/lib/python3.12/site-packages/google/adk/cli/utils/agent_loader.py", line 207, in _perform_load
+    if root_agent := self._load_from_module_or_package(actual_agent_name):
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jayaprakash/Documents/CogniX/ProdAIve/adk_data_science_agent/.venv/lib/python3.12/site-packages/google/adk/cli/utils/agent_loader.py", line 108, in _load_from_module_or_package
+    raise e
+  File "/home/jayaprakash/Documents/CogniX/ProdAIve/adk_data_science_agent/.venv/lib/python3.12/site-packages/google/adk/cli/utils/agent_loader.py", line 70, in _load_from_module_or_package
+    module_candidate = importlib.import_module(agent_name)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/importlib/__init__.py", line 90, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 995, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/home/jayaprakash/Documents/CogniX/ProdAIve/adk_data_science_agent/data_science/__init__.py", line 17, in <module>
+    from . import agent
+  File "/home/jayaprakash/Documents/CogniX/ProdAIve/adk_data_science_agent/data_science/agent.py", line 39, in <module>
+    from .sub_agents import bqml_agent
+  File "/home/jayaprakash/Documents/CogniX/ProdAIve/adk_data_science_agent/data_science/sub_agents/__init__.py", line 17, in <module>
+    from .bigquery.agent import bigquery_agent
+  File "/home/jayaprakash/Documents/CogniX/ProdAIve/adk_data_science_agent/data_science/sub_agents/bigquery/agent.py", line 29, in <module>
+    from .chase_sql import chase_db_tools
+  File "/home/jayaprakash/Documents/CogniX/ProdAIve/adk_data_science_agent/data_science/sub_agents/bigquery/chase_sql/chase_db_tools.py", line 24, in <module>
+    from .llm_utils import GeminiModel
+  File "/home/jayaprakash/Documents/CogniX/ProdAIve/adk_data_science_agent/data_science/sub_agents/bigquery/chase_sql/llm_utils.py", line 76, in <module>
+    aiplatform.init(
+  File "/home/jayaprakash/Documents/CogniX/ProdAIve/adk_data_science_agent/.venv/lib/python3.12/site-packages/google/cloud/aiplatform/initializer.py", line 244, in init
+    utils.validate_region(location)
+  File "/home/jayaprakash/Documents/CogniX/ProdAIve/adk_data_science_agent/.venv/lib/python3.12/site-packages/google/cloud/aiplatform/utils/__init__.py", line 319, in validate_region
+    raise ValueError(
+ValueError: Fail to load 'data_science' module. Unsupported region for Vertex AI, select from frozenset({'us-west2', 'southamerica-west1', 'northamerica-northeast2', 'europe-west1', 'us-central1', 'asia-south2', 'europe-central2', 'australia-southeast1', 'me-central1', 'europe-west2', 'asia-southeast1', 'us-east1', 'us-east5', 'us-west3', 'us-south1', 'asia-east2', 'europe-west4', 'asia-northeast2', 'us-east4', 'us-east7', 'australia-southeast2', 'europe-west6', 'asia-northeast1', 'us-west4', 'northamerica-northeast1', 'europe-west9', 'us-west1', 'europe-west8', 'africa-south1', 'asia-southeast2', 'me-central2', 'asia-east1', 'europe-southwest1', 'global', 'me-west1', 'europe-north1', 'europe-west12', 'asia-northeast3', 'europe-west3', 'asia-south1', 'southamerica-east1'})
+Traceback (most recent call last):
+  File "/home/jayaprakash/Documents/CogniX/ProdAIve/adk_data_science_agent/.venv/lib/python3.12/site-packages/google/adk/cli/adk_web_server.py", line 1525, in run_agent_live
+    task.result()
+  File "/home/jayaprakash/Documents/CogniX/ProdAIve/adk_data_science_agent/.venv/lib/python3.12/site-packages/google/adk/cli/adk_web_server.py", line 1494, in forward_events
+    runner = await self.get_runner_async(app_name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jayaprakash/Documents/CogniX/ProdAIve/adk_data_science_agent/.venv/lib/python3.12/site-packages/google/adk/cli/adk_web_server.py", line 469, in get_runner_async
+    agent_or_app = self.agent_loader.load_agent(app_name)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jayaprakash/Documents/CogniX/ProdAIve/adk_data_science_agent/.venv/lib/python3.12/site-packages/google/adk/cli/utils/agent_loader.py", line 271, in load_agent
+    agent_or_app = self._perform_load(agent_name)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jayaprakash/Documents/CogniX/ProdAIve/adk_data_science_agent/.venv/lib/python3.12/site-packages/google/adk/cli/utils/agent_loader.py", line 207, in _perform_load
+    if root_agent := self._load_from_module_or_package(actual_agent_name):
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jayaprakash/Documents/CogniX/ProdAIve/adk_data_science_agent/.venv/lib/python3.12/site-packages/google/adk/cli/utils/agent_loader.py", line 108, in _load_from_module_or_package
+    raise e
+  File "/home/jayaprakash/Documents/CogniX/ProdAIve/adk_data_science_agent/.venv/lib/python3.12/site-packages/google/adk/cli/utils/agent_loader.py", line 70, in _load_from_module_or_package
+    module_candidate = importlib.import_module(agent_name)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/importlib/__init__.py", line 90, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 995, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/home/jayaprakash/Documents/CogniX/ProdAIve/adk_data_science_agent/data_science/__init__.py", line 17, in <module>
+    from . import agent
+  File "/home/jayaprakash/Documents/CogniX/ProdAIve/adk_data_science_agent/data_science/agent.py", line 39, in <module>
+    from .sub_agents import bqml_agent
+  File "/home/jayaprakash/Documents/CogniX/ProdAIve/adk_data_science_agent/data_science/sub_agents/__init__.py", line 17, in <module>
+    from .bigquery.agent import bigquery_agent
+  File "/home/jayaprakash/Documents/CogniX/ProdAIve/adk_data_science_agent/data_science/sub_agents/bigquery/agent.py", line 29, in <module>
+    from .chase_sql import chase_db_tools
+  File "/home/jayaprakash/Documents/CogniX/ProdAIve/adk_data_science_agent/data_science/sub_agents/bigquery/chase_sql/chase_db_tools.py", line 24, in <module>
+    from .llm_utils import GeminiModel
+  File "/home/jayaprakash/Documents/CogniX/ProdAIve/adk_data_science_agent/data_science/sub_agents/bigquery/chase_sql/llm_utils.py", line 76, in <module>
+    aiplatform.init(
+  File "/home/jayaprakash/Documents/CogniX/ProdAIve/adk_data_science_agent/.venv/lib/python3.12/site-packages/google/cloud/aiplatform/initializer.py", line 244, in init
+    utils.validate_region(location)
+  File "/home/jayaprakash/Documents/CogniX/ProdAIve/adk_data_science_agent/.venv/lib/python3.12/site-packages/google/cloud/aiplatform/utils/__init__.py", line 319, in validate_region
+    raise ValueError(
+ValueError: Fail to load 'data_science' module. Unsupported region for Vertex AI, select from frozenset({'us-west2', 'southamerica-west1', 'northamerica-northeast2', 'europe-west1', 'us-central1', 'asia-south2', 'europe-central2', 'australia-southeast1', 'me-central1', 'europe-west2', 'asia-southeast1', 'us-east1', 'us-east5', 'us-west3', 'us-south1', 'asia-east2', 'europe-west4', 'asia-northeast2', 'us-east4', 'us-east7', 'australia-southeast2', 'europe-west6', 'asia-northeast1', 'us-west4', 'northamerica-northeast1', 'europe-west9', 'us-west1', 'europe-west8', 'africa-south1', 'asia-southeast2', 'me-central2', 'asia-east1', 'europe-southwest1', 'global', 'me-west1', 'europe-north1', 'europe-west12', 'asia-northeast3', 'europe-west3', 'asia-south1', 'southamerica-east1'})
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/home/jayaprakash/Documents/CogniX/ProdAIve/adk_data_science_agent/.venv/lib/python3.12/site-packages/websockets/legacy/protocol.py", line 945, in transfer_data
+    message = await self.read_message()
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jayaprakash/Documents/CogniX/ProdAIve/adk_data_science_agent/.venv/lib/python3.12/site-packages/websockets/legacy/protocol.py", line 1015, in read_message
+    frame = await self.read_data_frame(max_size=self.max_size)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jayaprakash/Documents/CogniX/ProdAIve/adk_data_science_agent/.venv/lib/python3.12/site-packages/websockets/legacy/protocol.py", line 1090, in read_data_frame
+    frame = await self.read_frame(max_size)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jayaprakash/Documents/CogniX/ProdAIve/adk_data_science_agent/.venv/lib/python3.12/site-packages/websockets/legacy/protocol.py", line 1147, in read_frame
+    frame = await Frame.read(
+            ^^^^^^^^^^^^^^^^^
+  File "/home/jayaprakash/Documents/CogniX/ProdAIve/adk_data_science_agent/.venv/lib/python3.12/site-packages/websockets/legacy/framing.py", line 71, in read
+    data = await reader(2)
+           ^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/streams.py", line 750, in readexactly
+    raise exceptions.IncompleteReadError(incomplete, n)
+asyncio.exceptions.IncompleteReadError: 0 bytes read on a total of 2 expected bytes
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/jayaprakash/Documents/CogniX/ProdAIve/adk_data_science_agent/.venv/lib/python3.12/site-packages/uvicorn/protocols/websockets/websockets_impl.py", line 338, in asgi_send
+    await self.close(code, reason)
+  File "/home/jayaprakash/Documents/CogniX/ProdAIve/adk_data_science_agent/.venv/lib/python3.12/site-packages/websockets/legacy/protocol.py", line 755, in close
+    await self.write_close_frame(Close(code, reason))
+  File "/home/jayaprakash/Documents/CogniX/ProdAIve/adk_data_science_agent/.venv/lib/python3.12/site-packages/websockets/legacy/protocol.py", line 1216, in write_close_frame
+    await self.write_frame(True, OP_CLOSE, data, _state=State.CLOSING)
+  File "/home/jayaprakash/Documents/CogniX/ProdAIve/adk_data_science_agent/.venv/lib/python3.12/site-packages/websockets/legacy/protocol.py", line 1191, in write_frame
+    await self.drain()
+  File "/home/jayaprakash/Documents/CogniX/ProdAIve/adk_data_science_agent/.venv/lib/python3.12/site-packages/websockets/legacy/protocol.py", line 1180, in drain
+    await self.ensure_open()
+  File "/home/jayaprakash/Documents/CogniX/ProdAIve/adk_data_science_agent/.venv/lib/python3.12/site-packages/websockets/legacy/protocol.py", line 921, in ensure_open
+    raise self.connection_closed_exc()
+websockets.exceptions.ConnectionClosedError: sent 1011 (internal error) Fail to load 'data_science' module. Unsupported region for Vertex AI, select from frozenset({'us-west2', 'southamerica-west; no close frame received
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/jayaprakash/Documents/CogniX/ProdAIve/adk_data_science_agent/.venv/lib/python3.12/site-packages/starlette/websockets.py", line 86, in send
+    await self._send(message)
+  File "/home/jayaprakash/Documents/CogniX/ProdAIve/adk_data_science_agent/.venv/lib/python3.12/site-packages/starlette/_exception_handler.py", line 39, in sender
+    await send(message)
+  File "/home/jayaprakash/Documents/CogniX/ProdAIve/adk_data_science_agent/.venv/lib/python3.12/site-packages/uvicorn/protocols/websockets/websockets_impl.py", line 345, in asgi_send
+    raise ClientDisconnected from exc
+uvicorn.protocols.utils.ClientDisconnected
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/jayaprakash/Documents/CogniX/ProdAIve/adk_data_science_agent/.venv/lib/python3.12/site-packages/uvicorn/protocols/websockets/websockets_impl.py", line 244, in run_asgi
+    result = await self.app(self.scope, self.asgi_receive, self.asgi_send)  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jayaprakash/Documents/CogniX/ProdAIve/adk_data_science_agent/.venv/lib/python3.12/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/jayaprakash/Documents/CogniX/ProdAIve/adk_data_science_agent/.venv/lib/python3.12/site-packages/fastapi/applications.py", line 1133, in __call__
+    await super().__call__(scope, receive, send)
+  File "/home/jayaprakash/Documents/CogniX/ProdAIve/adk_data_science_agent/.venv/lib/python3.12/site-packages/starlette/applications.py", line 113, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/jayaprakash/Documents/CogniX/ProdAIve/adk_data_science_agent/.venv/lib/python3.12/site-packages/starlette/middleware/errors.py", line 151, in __call__
+    await self.app(scope, receive, send)
+  File "/home/jayaprakash/Documents/CogniX/ProdAIve/adk_data_science_agent/.venv/lib/python3.12/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/home/jayaprakash/Documents/CogniX/ProdAIve/adk_data_science_agent/.venv/lib/python3.12/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/jayaprakash/Documents/CogniX/ProdAIve/adk_data_science_agent/.venv/lib/python3.12/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/jayaprakash/Documents/CogniX/ProdAIve/adk_data_science_agent/.venv/lib/python3.12/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/home/jayaprakash/Documents/CogniX/ProdAIve/adk_data_science_agent/.venv/lib/python3.12/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/home/jayaprakash/Documents/CogniX/ProdAIve/adk_data_science_agent/.venv/lib/python3.12/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/home/jayaprakash/Documents/CogniX/ProdAIve/adk_data_science_agent/.venv/lib/python3.12/site-packages/starlette/routing.py", line 364, in handle
+    await self.app(scope, receive, send)
+  File "/home/jayaprakash/Documents/CogniX/ProdAIve/adk_data_science_agent/.venv/lib/python3.12/site-packages/fastapi/routing.py", line 149, in app
+    await wrap_app_handling_exceptions(app, session)(scope, receive, send)
+  File "/home/jayaprakash/Documents/CogniX/ProdAIve/adk_data_science_agent/.venv/lib/python3.12/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/home/jayaprakash/Documents/CogniX/ProdAIve/adk_data_science_agent/.venv/lib/python3.12/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/home/jayaprakash/Documents/CogniX/ProdAIve/adk_data_science_agent/.venv/lib/python3.12/site-packages/fastapi/routing.py", line 146, in app
+    await func(session)
+  File "/home/jayaprakash/Documents/CogniX/ProdAIve/adk_data_science_agent/.venv/lib/python3.12/site-packages/fastapi/routing.py", line 459, in app
+    await dependant.call(**solved_result.values)
+  File "/home/jayaprakash/Documents/CogniX/ProdAIve/adk_data_science_agent/.venv/lib/python3.12/site-packages/google/adk/cli/adk_web_server.py", line 1533, in run_agent_live
+    await websocket.close(
+  File "/home/jayaprakash/Documents/CogniX/ProdAIve/adk_data_science_agent/.venv/lib/python3.12/site-packages/starlette/websockets.py", line 181, in close
+    await self.send({"type": "websocket.close", "code": code, "reason": reason or ""})
+  File "/home/jayaprakash/Documents/CogniX/ProdAIve/adk_data_science_agent/.venv/lib/python3.12/site-packages/starlette/websockets.py", line 89, in send
+    raise WebSocketDisconnect(code=1006)
+starlette.websockets.WebSocketDisconnect
+INFO:     127.0.0.1:47768 - "GET /dev-ui/assets/audio-processor.js HTTP/1.1" 200 OK
+INFO:     connection closed
+INFO:     127.0.0.1:47588 - "GET /dev-ui/?app=data_science&session=61d820b5-ec46-47ef-b834-19e28e31d1d9 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47768 - "GET /dev-ui/assets/config/runtime-config.json HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:47768 - "GET /list-apps?relative_path=./ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47768 - "GET /apps/data_science/users/user/sessions/61d820b5-ec46-47ef-b834-19e28e31d1d9 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47768 - "GET /apps/data_science/eval_sets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47588 - "GET /apps/data_science/eval_results HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47768 - "GET /debug/trace/session/61d820b5-ec46-47ef-b834-19e28e31d1d9 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47768 - "GET /apps/data_science/users/user/sessions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56240 - "GET /api/overview HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:56240 - "GET / HTTP/1.1" 307 Temporary Redirect
+INFO:     127.0.0.1:56244 - "GET / HTTP/1.1" 307 Temporary Redirect
+INFO:     127.0.0.1:56240 - "GET /api/overview HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:57846 - "GET /api/process_flow HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:57846 - "GET /api/process_flow HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:33678 - "GET /api/overview HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:33678 - "GET /api/overview HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:40702 - "GET /api/kiln_health?timerange=24h HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:40702 - "GET /api/kiln_health?timerange=24h HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:54566 - "POST /api/agent_chat HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:45576 - "GET /api/energy_cockpit?timerange=7d HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:45576 - "GET /api/energy_cockpit?timerange=7d HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:45576 - "GET /api/predictive_quality?timerange=7d HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:45576 - "GET /api/predictive_quality?timerange=7d HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:45576 - "GET /api/variance_analysis HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:45576 - "GET /api/variance_analysis HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:45576 - "GET /api/agent/actions HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:53320 - "GET /api/agent/recommendations HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:45576 - "GET /api/agent/actions HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:53320 - "GET /api/agent/recommendations HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:53320 - "GET /api/process_flow HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:53320 - "GET /api/process_flow HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:53320 - "GET /api/settings HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:53320 - "GET /api/settings HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:53320 - "GET /api/livekit-token HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:53320 - "GET /api/livekit-token HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:53320 - "GET /api/overview HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:53320 - "GET /api/overview HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:59860 - "GET /api/overview HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:59870 - "GET / HTTP/1.1" 307 Temporary Redirect
+INFO:     127.0.0.1:59860 - "GET /api/overview HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:59870 - "GET / HTTP/1.1" 307 Temporary Redirect
+INFO:     127.0.0.1:36044 - "GET /api/process_flow HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:36044 - "GET /api/process_flow HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:43130 - "POST /api/agent_chat HTTP/1.1" 404 Not Found
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+
++-----------------------------------------------------------------------------+
+| ADK Web Server shutting down...                                             |
++-----------------------------------------------------------------------------+
+
+INFO:     Application shutdown complete.
+INFO:     Finished server process [57171]

@@ -13,6 +13,8 @@ import { keyframes } from '@mui/system';
 import FullscreenIcon from '@mui/icons-material/Fullscreen';
 import FullscreenExitIcon from '@mui/icons-material/FullscreenExit';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
+import * as LiveKit from 'livekit-client';
+
 
 interface Message {
   id: number;
@@ -44,12 +46,11 @@ interface Alert {
 }
 
 type AssistantMode = 'chat' | 'voice';
-type ConversationState = 'idle' | 'listening' | 'speaking' | 'alerting';
+type ConversationState = 'idle' | 'connecting' | 'listening' | 'processing' | 'speaking' | 'alerting' | 'disconnected';
 
 const GeminiAIAssistant: React.FC<GeminiAIAssistantProps> = ({ isFullScreen, onToggleFullScreen, alert, onSelectView }) => {
   const theme = useTheme();
   const [mode, setMode] = useState<AssistantMode>('voice');
-  const [conversationState, setConversationState] = useState<ConversationState>('idle');
 
   // State for Chat Mode
   const [messages, setMessages] = useState<Message[]>([
@@ -59,6 +60,13 @@ const GeminiAIAssistant: React.FC<GeminiAIAssistantProps> = ({ isFullScreen, onT
   const [isTyping, setIsTyping] = useState(false);
   const scrollRef = useRef<null | HTMLDivElement>(null);
   const [activeAlert, setActiveAlert] = useState<Alert | null>(null);
+
+  // LiveKit State
+  const [room, setRoom] = useState<LiveKit.Room | null>(null);
+  const [localParticipant, setLocalParticipant] = useState<LiveKit.LocalParticipant | null>(null);
+  const [isMicEnabled, setIsMicEnabled] = useState(false);
+
+  const currentConversationState: ConversationState = alert ? 'alerting' : (room ? (isMicEnabled ? 'listening' : 'idle') : 'connecting');
 
   // --- Animation Keyframes for the Blob ---
   const morph = keyframes`
@@ -83,6 +91,7 @@ const GeminiAIAssistant: React.FC<GeminiAIAssistantProps> = ({ isFullScreen, onT
     }
     100% { transform: scale(0.95); }
   `;
+
   useEffect(() => {
     if (mode === 'chat' && scrollRef.current) {
       scrollRef.current.scrollIntoView({ behavior: 'smooth' });
@@ -92,10 +101,67 @@ const GeminiAIAssistant: React.FC<GeminiAIAssistantProps> = ({ isFullScreen, onT
   useEffect(() => {
     if (alert) {
       setMode('voice');
-      setConversationState('alerting');
       setActiveAlert(alert);
     }
   }, [alert]);
+
+  console.log('Conversation state (render):', currentConversationState);
+
+  useEffect(() => {
+    const connectToLiveKit = async () => {
+      if (mode === 'voice' && !room) {
+        try {
+          const roomName = 'gemini-voice-room'; // You can make this dynamic
+          const participantName = `user-${Math.random().toFixed(2)}`;
+
+          const tokenResponse = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/livekit-token?room_name=${roomName}&participant_name=${participantName}`);
+          const data = await tokenResponse.json();
+          const token = data.token;
+
+          const newRoom = new LiveKit.Room();
+
+          newRoom.on(LiveKit.RoomEvent.Disconnected, () => {
+            setRoom(null);
+            setLocalParticipant(null);
+            setIsMicEnabled(false);
+          });
+
+          newRoom.on(LiveKit.RoomEvent.LocalTrackPublished, (_publication) => {
+            if (_publication.kind === LiveKit.Track.Kind.Audio) {
+            }
+          });
+
+          newRoom.on(LiveKit.RoomEvent.LocalTrackUnpublished, (_publication) => {
+            if (_publication.kind === LiveKit.Track.Kind.Audio) {
+            }
+          });
+
+          newRoom.on(LiveKit.RoomEvent.TrackSubscribed, (track, _publication, participant) => {
+            if (track.kind === LiveKit.Track.Kind.Audio) {
+              const audio = track.attach();
+              document.body.appendChild(audio);
+              audio.play();
+              audio.onended = () => {
+              };
+            }
+          });
+
+          await newRoom.connect(import.meta.env.VITE_LIVEKIT_URL || 'ws://localhost:7880', token);
+          setRoom(newRoom);
+          setLocalParticipant(newRoom.localParticipant);
+        } catch (error) {
+        }
+      }
+    };
+
+    connectToLiveKit();
+
+    return () => {
+      if (room) {
+        room.disconnect();
+      }
+    };
+  }, [mode, room]);
 
   const handleModeToggle = () => {
     setMode(current => (current === 'chat' ? 'voice' : 'chat'));
@@ -104,9 +170,7 @@ const GeminiAIAssistant: React.FC<GeminiAIAssistantProps> = ({ isFullScreen, onT
   const handleApprove = () => {
     console.log('Recommendation approved.');
     setActiveAlert({ message: 'Action approved and executed.' });
-    setConversationState('speaking'); // Give feedback
     setTimeout(() => {
-      setConversationState('idle');
       setActiveAlert(null);
     }, 3000);
   };
@@ -114,36 +178,38 @@ const GeminiAIAssistant: React.FC<GeminiAIAssistantProps> = ({ isFullScreen, onT
   const handleDeny = () => {
     console.log('Recommendation denied.');
     setActiveAlert({ message: 'Action denied.' });
-    setConversationState('speaking');
     setTimeout(() => {
-      setConversationState('idle');
       setActiveAlert(null);
     }, 3000);
   };
 
-
   // --- Voice Mode Logic ---
 
-  const handleMicClick = () => {
-    if (conversationState === 'idle' || conversationState === 'alerting') {
-      setConversationState('listening');
-      setActiveAlert(null); // Clear alert when user interacts
-      // Simulate listening then speaking
-      setTimeout(() => {
-        setConversationState('speaking');
-        setTimeout(() => setConversationState('idle'), 4000); // Back to idle
-      }, 3000);
+  const toggleMic = async () => {
+    if (!localParticipant) return;
+
+    if (isMicEnabled) {
+      localParticipant.setMicrophoneEnabled(false);
+      setIsMicEnabled(false);
     } else {
-      setActiveAlert(null);
-      setConversationState('idle');
+      await localParticipant.setMicrophoneEnabled(true);
+      setIsMicEnabled(true);
     }
   };
 
+  const handleMicClick = () => {
+    if (currentConversationState === 'alerting') return;
+    toggleMic();
+  };
+
   const getStatusText = () => {
-    switch (conversationState) {
+    switch (currentConversationState) {
+      case 'connecting': return 'Connecting...';
       case 'listening': return 'Listening...';
+      case 'processing': return 'Thinking...';
       case 'speaking': return 'Speaking...';
       case 'alerting': return activeAlert?.message || 'Alert!';
+      case 'disconnected': return 'Disconnected. Please refresh.';
       case 'idle':
       default:
         return 'Click the mic to start';
@@ -156,54 +222,65 @@ const GeminiAIAssistant: React.FC<GeminiAIAssistantProps> = ({ isFullScreen, onT
     if (input.trim() === '') return;
 
     const newUserMessage: Message = { id: Date.now(), sender: 'user', text: input.trim() };
-    setMessages(prev => [...prev, newUserMessage]);
+    const newMessages = [...messages, newUserMessage];
+
+    setMessages(newMessages);
     setInput('');
     setIsTyping(true);
 
-    if (newUserMessage.text.toLowerCase().includes('plan operations')) {
-      const planSteps = [
-        'Analyzing current kiln data...', 
-        'Identifying optimal temperature adjustments...',
-        'Calculating fuel efficiency improvements...', 
-        'Generating new operational parameters...', 
-        'Plan operations complete. Applying changes.',
-      ];
-
-      let delay = 1000;
-      planSteps.forEach((step, index) => {
-        setTimeout(() => {
-          const planMessage: Message = { id: Date.now() + index, sender: 'ai', text: step, type: 'plan' };
-          setMessages(prev => [...prev, planMessage]);
-          if (index === planSteps.length - 1) {
-            setIsTyping(false);
-          }
-        }, delay);
-        delay += 1500;
-      });
-
-    } else {
-      setTimeout(() => {
-        let aiResponseText = `I am sorry, I cannot process the request: "${newUserMessage.text}".`;
-        let chartData = undefined;
-
-        if (newUserMessage.text.toLowerCase().includes('energy')) {
-          aiResponseText = 'Here is a summary of today\'s energy consumption. It looks stable.';
-          chartData = Array.from({ length: 8 }, (_, i) => ({
-            time: `${String(i * 3).padStart(2, '0')}:00`,
-            consumption: 100 + Math.sin(i) * 20 + Math.random() * 10,
-          }));
-        } else if (newUserMessage.text.toLowerCase().includes('temperature')) {
-          aiResponseText = 'The recent temperature spike was due to a temporary fuel pressure fluctuation. The system has already adjusted, and temperatures are now stable.';
-        } else if (newUserMessage.text.toLowerCase().includes('quality')) {
-          aiResponseText = 'The predicted quality score for the next batch is 94.5%, which is well within the optimal range.';
-        }
-
-        const aiResponse: Message = { id: Date.now() + 1, sender: 'ai', text: aiResponseText, chartData };
-        setIsTyping(false);
-        setMessages(prev => [...prev, aiResponse]);
-      }, 1500);
-    }
+    fetch(`${import.meta.env.VITE_API_BASE_URL}/api/agent_chat`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ message: newUserMessage.text, history: newMessages }),
+    })
+    .then(response => response.json())
+    .then(data => {
+      const aiResponse: Message = { id: Date.now() + 1, sender: 'ai', text: data.text || '' };
+      setIsTyping(false);
+      setMessages(currentMessages => [...currentMessages, aiResponse]);
+    })
+    .catch(error => {
+      console.error('Error fetching chat inference:', error);
+      const aiResponse: Message = { id: Date.now() + 1, sender: 'ai', text: 'Sorry, something went wrong.' };
+      setIsTyping(false);
+      setMessages(currentMessages => [...currentMessages, aiResponse]);
+    });
   };
+
+  const handleSendDataScienceMessage = (message: string) => {
+    if (message.trim() === '') return;
+
+    const newUserMessage: Message = { id: Date.now(), sender: 'user', text: message.trim() };
+    const newMessages = [...messages, newUserMessage];
+
+    setMessages(newMessages);
+    setInput('');
+    setIsTyping(true);
+
+    fetch(`${import.meta.env.VITE_API_BASE_URL}/api/data_science_chat`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ message: message.trim(), history: newMessages }),
+    })
+    .then(response => response.json())
+    .then(data => {
+      const aiResponse: Message = { id: Date.now() + 1, sender: 'ai', text: data.text || '' };
+      setIsTyping(false);
+      setMessages(currentMessages => [...currentMessages, aiResponse]);
+    })
+    .catch(error => {
+      console.error('Error fetching chat inference:', error);
+      const aiResponse: Message = { id: Date.now() + 1, sender: 'ai', text: 'Sorry, something went wrong.' };
+      setIsTyping(false);
+      setMessages(currentMessages => [...currentMessages, aiResponse]);
+    });
+  };
+
+  
 
   const suggestionChips: { text: string; view: string; query: string }[] = [
     { text: 'Summarize energy usage', view: 'Energy Cockpit', query: 'Summarize energy usage' },
@@ -252,7 +329,7 @@ const GeminiAIAssistant: React.FC<GeminiAIAssistantProps> = ({ isFullScreen, onT
         <>
           <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', p: 2, position: 'relative', textAlign: 'center' }}>
             <AnimatePresence>
-              {conversationState === 'alerting' ? (
+              {currentConversationState === 'alerting' ? (
                 <motion.div initial={{ opacity: 0, scale: 0.5 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.5 }} transition={{ duration: 0.5, ease: 'easeInOut' }}>
                   <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
                     <Box sx={{
@@ -286,7 +363,7 @@ const GeminiAIAssistant: React.FC<GeminiAIAssistantProps> = ({ isFullScreen, onT
                       width: 200,
                       height: 200,
                       position: 'relative',
-                      animation: conversationState !== 'idle' ? `${rotate} 15s linear infinite` : 'none',
+                      animation: currentConversationState !== 'idle' ? `${rotate} 15s linear infinite` : 'none',
                       '&::before': {
                         content: '""',
                         position: 'absolute',
@@ -298,7 +375,7 @@ const GeminiAIAssistant: React.FC<GeminiAIAssistantProps> = ({ isFullScreen, onT
                         opacity: 0.8,
                         animation: `${morph} 8s ease-in-out infinite`,
                         transition: 'transform 0.5s ease',
-                        transform: conversationState !== 'idle' ? 'scale(1.1)' : 'scale(1)',
+                        transform: currentConversationState !== 'idle' ? 'scale(1.1)' : 'scale(1)',
                       },
                     }}
                   />
@@ -307,21 +384,21 @@ const GeminiAIAssistant: React.FC<GeminiAIAssistantProps> = ({ isFullScreen, onT
             </AnimatePresence>
           </Box>
           <Box sx={{ p: 3, borderTop: `1px solid ${theme.palette.divider}`, bgcolor: 'background.paper', textAlign: 'center' }}>
-            {conversationState !== 'alerting' && (
+            {currentConversationState !== 'alerting' && (
               <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                 <Typography variant="subtitle1" color="text.secondary" sx={{ position: 'absolute', bottom: 120 }}>
                   {getStatusText()}
                 </Typography>
                 <IconButton
-                  color={conversationState === 'idle' ? 'primary' : 'error'}
+                  color={currentConversationState === 'listening' ? 'error' : 'primary'}
                   onClick={handleMicClick}
                   sx={{
                     width: 72,
                     height: 72,
-                    bgcolor: conversationState === 'idle' ? 'primary.main' : 'error.main',
+                    bgcolor: currentConversationState === 'listening' ? 'error.main' : 'primary.main',
                     color: '#fff',
                     '&:hover': {
-                      bgcolor: conversationState === 'idle' ? 'primary.dark' : 'error.dark',
+                      bgcolor: currentConversationState === 'listening' ? 'error.dark' : 'primary.dark',
                     },
                     boxShadow: theme.shadows[4],
                   }}
@@ -377,8 +454,39 @@ const GeminiAIAssistant: React.FC<GeminiAIAssistantProps> = ({ isFullScreen, onT
               ))}
             </Box>
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <TextField fullWidth variant="outlined" size="small" placeholder="Ask Gemini..." value={input} onChange={(e) => setInput(e.target.value)} onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()} sx={{ mr: 1, '& .MuiOutlinedInput-root': { borderRadius: '20px' } }} />
-              <IconButton color="primary" onClick={handleSendMessage} sx={{ bgcolor: 'primary.main', color: '#fff', '&:hover': { bgcolor: 'primary.dark' } }}><SendIcon /></IconButton>
+              <TextField
+                fullWidth
+                variant="outlined"
+                size="small"
+                placeholder="Ask Gemini... (try '/ds ' for the data science agent)"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter') {
+                    if (input.startsWith('/ds ')) {
+                      const new_input = input.substring(4);
+                      handleSendDataScienceMessage(new_input);
+                    } else {
+                      handleSendMessage();
+                    }
+                  }
+                }}
+                sx={{ mr: 1, '& .MuiOutlinedInput-root': { borderRadius: '20px' } }}
+              />
+              <IconButton
+                color="primary"
+                onClick={() => {
+                  if (input.startsWith('/ds ')) {
+                    const new_input = input.substring(4);
+                    handleSendDataScienceMessage(new_input);
+                  } else {
+                    handleSendMessage();
+                  }
+                }}
+                sx={{ bgcolor: 'primary.main', color: '#fff', '&:hover': { bgcolor: 'primary.dark' } }}
+              >
+                <SendIcon />
+              </IconButton>
             </Box>
           </Box>
         </>

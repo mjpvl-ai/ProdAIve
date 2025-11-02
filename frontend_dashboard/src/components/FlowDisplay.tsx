@@ -1,5 +1,5 @@
-import React from 'react';
-import { Box, Typography, Paper, Chip, Avatar, Grid } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Box, Typography, Paper, Chip, Avatar, Grid, CircularProgress, Alert } from '@mui/material';
 import { useTheme, alpha } from '@mui/material/styles';
 import { keyframes } from '@mui/system';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
@@ -15,17 +15,6 @@ const pulse = keyframes`
   70% { box-shadow: 0 0 0 15px rgba(255, 82, 82, 0); }
   100% { box-shadow: 0 0 0 0 rgba(255, 82, 82, 0); }
 `;
-
-const flowNodes = [
-  { id: '1', label: 'Quarry & Crush', status: 'completed', message: 'Limestone extracted' },
-  { id: '2', label: 'Raw Grinding', status: 'completed', message: 'Raw meal prepared' },
-  { id: '3', label: 'Blending & Homogenization', status: 'completed', message: 'Raw meal blended' },
-  { id: '4', label: 'Preheating', status: 'running', message: 'Cyclone stage 4 active' },
-  { id: '5', label: 'Kiln Burning', status: 'failed', message: 'High temp spike!' },
-  { id: '6', label: 'Clinker Cooling', status: 'pending' },
-  { id: '7', label: 'Cement Grinding', status: 'pending' },
-  { id: '8', label: 'Silo Storage', status: 'pending' },
-];
 
 const getStatusStyling = (status: string | undefined, theme: any) => {
   switch (status) {
@@ -77,6 +66,36 @@ interface FlowDisplayProps {
 
 const FlowDisplay: React.FC<FlowDisplayProps> = ({ alertingNodeId }) => {
   const theme = useTheme();
+  const [flowNodes, setFlowNodes] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/process_flow`);
+        const data = await response.json();
+        setFlowNodes(data);
+      } catch (err) {
+        setError('Failed to fetch process flow data.');
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  if (loading) {
+    return <CircularProgress />;
+  }
+
+  if (error) {
+    return <Alert severity="error">{error}</Alert>;
+  }
 
   return (
     <Grid container spacing={3} sx={{ height: '100%', flexWrap: 'nowrap' }}>
@@ -85,7 +104,7 @@ const FlowDisplay: React.FC<FlowDisplayProps> = ({ alertingNodeId }) => {
           <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1 }}>
             {flowNodes.map((node, index) => {
               const { color, icon, avatarBg } = getStatusStyling(node.status, theme);
-              const isAlerting = node.id === (alertingNodeId === '4' ? '5' : alertingNodeId);
+              const isAlerting = node.id === alertingNodeId;
 
               return (
                 <React.Fragment key={node.id}>
